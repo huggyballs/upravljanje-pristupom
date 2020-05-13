@@ -66,7 +66,7 @@ def unos():
         pass 
 
 def main():
-    print("početak rada sustava")
+    print("pocetak rada sustava")
     ekran.lcd_display_string("Unesite PIN", 1)
     unos()
     print("uspjesan kraj!")
