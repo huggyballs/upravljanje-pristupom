@@ -12,3 +12,12 @@ import json
 from select import select
 import tkinter as tk
 from tkinter import ttk
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+buzzer = 5
+relay = 6
+GPIO.setup(buzzer,GPIO.OUT)
+GPIO.setup(relay,GPIO.OUT)
+ekran = lcddriver.lcd()
