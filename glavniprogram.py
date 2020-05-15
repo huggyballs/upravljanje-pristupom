@@ -5,6 +5,14 @@ import lcddriver
 import RPi.GPIO as GPIO
 import time
 import os
+import sys
+from threading import Thread
+import threading
+import json
+from select import select
+import tkinter as tk
+from tkinter import ttk
+
 
 GPIO.setmode(GPIO.BCM)
 
@@ -21,6 +29,11 @@ ekran = lcddriver.lcd()
 
 def NFCread():
     print("placeholder")
+    answer = input()
+    return answer
+
+def NFCreadAdd():
+    print("placeholder")
 
 def TagNumberNFC():
     print("Odabir broja tagova i dodavanje u bazu")
@@ -34,7 +47,13 @@ def TagNumberNFC():
         ekran.lcd_clear()
         ekran.lcd_display_string("Prislonite NFC", 1)
         ekran.lcd_display_string("uredjaj!", 2)
-        NFCread()
+        NFCreadAdd()
+    ekran.lcd_clear()
+    ekran.lcd_display_string("Uspjesno", 1)
+    ekran.lcd_display_string("Dodano!", 2)
+    time.sleep(2)
+    print("Povratak na pocetak")
+    main()
 
 
 def SecurityLevel():
@@ -52,7 +71,6 @@ def SecurityLevel():
         ekran.lcd_display_string("Razina " + odgovorstr, 1)
         ekran.lcd_display_string("Odabrana!", 2)
         time.sleep(2)
-        pass
     else:
         ekran.lcd_clear()
         ekran.lcd_display_string("Pogresan", 1)
@@ -65,10 +83,6 @@ def NFCadd():
     print("upit za NFC uredjaj")
     SecurityLevel()
     TagNumberNFC()
-    ekran.lcd_clear()
-    ekran.lcd_display_string("Prislonite NFC", 1)
-    ekran.lcd_display_string("uredjaj:", 2)
-    time.sleep(3)
 
 def pristup():
     ekran.lcd_clear()
@@ -78,6 +92,26 @@ def pristup():
     GPIO.output(buzzer,GPIO.LOW)
     ekran.lcd_display_string("PIN je tocan!", 1)
     time.sleep(2)
+    ekran.lcd_clear()
+    ekran.lcd_display_string("Prislonite NFC", 1)
+    ekran.lcd_display_string("uredjaj!", 2)
+    access = NFCread()
+    if access == 1:
+        ekran.lcd_clear()
+        ekran.lcd_display_string("Pristup", 1)
+        ekran.lcd_display_string("odobren!", 2)
+        GPIO.output(buzzer,GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.LOW)
+        GPIO.output(relay,GPIO.HIGH)
+        time.sleep(5)
+        GPIO.output(relay,GPIO.LOW)
+        pass
+    else:
+        ekran.lcd_clear()
+        ekran.lcd_display_string("Pristup", 1)
+        ekran.lcd_display_string("odbijen!", 2)
+        main()
 
 def dodavanje():
     ekran.lcd_clear()
