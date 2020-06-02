@@ -28,6 +28,61 @@ GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
 
 def UserAdd():
+    print("Uspjesno citanje")
+    response = 0
+
+    while response != 1 or response != 3:
+        display.lcd_clear()
+        display.lcd_display_string("Dodati korisnika", 1)
+        display.lcd_display_string("1-DA 3-NE", 2)
+        time.sleep(1)
+        response = input()
+        NewSecLevel = 0
+
+        if response == 1 :
+            #dodati korisnika u bazu kao novi unos
+
+            while NewSecLevel != 1 or NewSecLevel != 2:
+                display.lcd_clear()
+                display.lcd_display_string("Sigurnosna razina", 1)
+                display.lcd_display_string("1 ili 2?", 2)
+                NewSecLevel = input()
+
+                if NewSecLevel == 1 :
+                    #Dodati sigurnosnu razinu u bazu
+                    pass
+                elif NewSecLevel == 2 :
+                    #Dodati sigurnosnu razinu u bazu
+                    pass
+                else:
+                    display.lcd_clear()
+                    display.lcd_display_string("Neispravan", 1)
+                    display.lcd_display_string("unos!", 2)
+                    time.sleep(1)
+                    pass
+
+            display.lcd_clear()
+            display.lcd_display_string("Broj NFC", 1)
+            display.lcd_display_string("uredjaja?", 2)
+            i = 0
+            DeviceNum = input()
+
+            while i < DeviceNum:
+                print("Citanje novog NFC uredjaja")
+                #Čitanje
+                #Dodavanje uređaja u bazu
+                i = i + 1
+            pass
+        elif response == 3 :
+            print("Negativan odgovor!")
+            pass
+        else:
+            display.lcd_clear()
+            display.lcd_display_string("Neispravan", 1)
+            display.lcd_display_string("odgovor!", 2)
+            time.sleep(1)
+            pass
+        pass
     pass
 
 def NFCAddCheck():
@@ -45,15 +100,16 @@ def NFCAddCheck():
         currenttime = time.time()
         elapsedtime = currenttime - starttime
         print("Citanje")
-
+        #Dodati kod za čitanje uređaja/kartice
         if elapsedtime > 5 :
             print("Neuspjesno citanje")
+            display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
             buzzerBeep()
             time.sleep(1)
             break
-        elif elapsedtime > 5:
+        elif elapsedtime > 6:
             #uvjet iznad je tu samo privremeno
             #Nakon potpune implementacije citanja uvjet ce biti da zastavica koja oznacava uspjesno citanje bude u jedinici
             #Nakon toga slijedit ce provjera
@@ -65,8 +121,13 @@ def NFCAddCheck():
             print("Prelazak na dodavanje")
             UserAdd()
             #Ako korisnik ima odgovarajuću razinu prelazi se na dodavanje korisnika
-
-
+        else:
+            print("Ne postoje ovlasti")
+            display.lcd_clear()
+            display.lcd_display_string("Nemate ovlasti", 1)
+            display.lcd_display_string("Za akciju!", 2)
+            time.sleep(1)
+            pass 
     pass
 
 def NFCReadAccess():
