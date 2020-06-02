@@ -18,13 +18,58 @@ import logging
 DEBUG=True
 VERNOSE=True
 
+display = lcddriver.lcd()
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 buzzer = 5
 relay = 6
+GPIO.setup(buzzer,GPIO.OUT)
+GPIO.setup(relay,GPIO.OUT)
 
-def NFCReadAccess():
+def UserAdd():
     pass
 
 def NFCAddCheck():
+    print("Provjera sigurnosne razine NFC tagom")
+    display.lcd_clear()
+    display.lcd_display_string("Prislonite NFC", 1)
+    display.lcd_display_string("uredjaj", 2)
+    starttime = time.time()
+    readflag = 0
+    secLevel = ''
+
+    #program provjerava pet sekundi nalazi li se u dometu valjani NFC uređaj
+
+    while True:
+        currenttime = time.time()
+        elapsedtime = currenttime - starttime
+        print("Citanje")
+
+        if elapsedtime > 5 :
+            print("Neuspjesno citanje")
+            display.lcd_display_string("Neuspjesno", 1)
+            display.lcd_display_string("Citanje!", 2)
+            buzzerBeep()
+            time.sleep(1)
+            break
+        elif elapsedtime > 5:
+            #uvjet iznad je tu samo privremeno
+            #Nakon potpune implementacije citanja uvjet ce biti da zastavica koja oznacava uspjesno citanje bude u jedinici
+            #Nakon toga slijedit ce provjera
+            #Napomena sebi da ne zaboravim zastavicu
+            break
+
+    if readflag == 1 :
+        if secLevel == 2 :
+            print("Prelazak na dodavanje")
+            UserAdd()
+            #Ako korisnik ima odgovarajuću razinu prelazi se na dodavanje korisnika
+
+
+    pass
+
+def NFCReadAccess():
     pass
 
 def buzzerBeep():
@@ -46,13 +91,6 @@ def relayOpen():
 
 def main():
     try:
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-
-        GPIO.setup(buzzer,GPIO.OUT)
-        GPIO.setup(relay,GPIO.OUT)
-
-        display = lcddriver.lcd()
 
         while True:
             display.lcd_clear()
