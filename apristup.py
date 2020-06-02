@@ -30,16 +30,16 @@ def NFCAddCheck():
 def buzzerBeep():
     GPIO.output(buzzer,GPIO.HIGH)
     print("BIIIIP")
-    sleep(1)
+    time.sleep(1)
     GPIO.output(buzzer,GPIO.LOW)
     print("KRAJ BIIIIP")
-    sleep(1)
+    time.sleep(1)
     pass
 
 def relayOpen():
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
-    sleep(5)
+    time.sleep(5)
     GPIO.output(buzzer,GPIO.LOW)
     print("Zakljucano")
     pass
