@@ -71,6 +71,7 @@ def UserAdd():
                 print("Citanje novog NFC uredjaja")
                 #Čitanje
                 #Dodavanje uređaja u bazu
+                buzzerBeep()
                 i = i + 1
             pass
         elif response == 3 :
@@ -94,7 +95,7 @@ def NFCAddCheck():
     readflag = 0
     secLevel = ''
 
-    #program provjerava pet sekundi nalazi li se u dometu valjani NFC uređaj
+    #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uređaj
 
     while True:
         currenttime = time.time()
@@ -114,6 +115,7 @@ def NFCAddCheck():
             #Nakon potpune implementacije citanja uvjet ce biti da zastavica koja oznacava uspjesno citanje bude u jedinici
             #Nakon toga slijedit ce provjera
             #Napomena sebi da ne zaboravim zastavicu
+            buzzerBeep()
             break
 
     if readflag == 1 :
@@ -136,10 +138,10 @@ def NFCReadAccess():
 def buzzerBeep():
     GPIO.output(buzzer,GPIO.HIGH)
     print("BIIIIP")
-    time.sleep(1)
+    time.sleep(0.5)
     GPIO.output(buzzer,GPIO.LOW)
     print("KRAJ BIIIIP")
-    time.sleep(1)
+    time.sleep(0.5)
     pass
 
 def relayOpen():
