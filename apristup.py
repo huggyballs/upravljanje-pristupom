@@ -16,7 +16,7 @@ import logging
 
 
 DEBUG=True
-VERNOSE=True
+VERBOSE=True
 
 display = lcddriver.lcd()
 
@@ -94,6 +94,7 @@ def NFCAddCheck():
     starttime = time.time()
     readflag = 0
     secLevel = ''
+    UserID = ''
 
     #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uređaj
 
@@ -133,7 +134,34 @@ def NFCAddCheck():
     pass
 
 def NFCReadAccess():
-    pass
+    print("Čitanje uređaja")
+    display.lcd_clear()
+    display.lcd_display_string("Prislonite NFC", 1)
+    display.lcd_display_string("uredjaj!", 2)
+    starttime = time.time()
+    readFlag = 0
+    userID = ''
+
+    #slijedi pokušaj čitanja NFC-a u trajanju od 5 sekundi
+    while True:
+        currenttime = time.time()
+        elapsedtime = currenttime - starttime
+        #kod za čitanje kartice ovdje
+        if elapsedtime > 5 :
+            print("Neuspjesno citanje")
+            display.lcd_clear()
+            display.lcd_display_string("Neuspjesno", 1)
+            display.lcd_display_string("Citanje!", 2)
+            buzzerBeep()
+            time.sleep(1)
+            break
+        elif elapsedtime > 6 :
+            #privremen uvjet
+            #uvjet stvarni ce biti zastavica u jedinici
+            #slijedi kod za provjeru postojanja korisnika
+            #ako korisnik postoji u bazi slijedi otvaranje vrata
+            buzzerBeep()
+            break
 
 def buzzerBeep():
     GPIO.output(buzzer,GPIO.HIGH)
@@ -147,6 +175,7 @@ def buzzerBeep():
 def relayOpen():
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
+    buzzerBeep()
     time.sleep(5)
     GPIO.output(buzzer,GPIO.LOW)
     print("Zakljucano")
@@ -176,7 +205,6 @@ def main():
         print("Kraj rada programa")
         pass    
     GPIO.cleanup()
-
 
 if __name__ == '__main__':
     main()
