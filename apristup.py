@@ -3,6 +3,7 @@
 
 import lcddriver
 import RPi.GPIO as GPIO
+import nfc
 
 import time
 import thread
@@ -22,6 +23,8 @@ display = lcddriver.lcd()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+clf = nfc.ContactlessFrontend()
+clf.open('ttyAMA0')
 buzzer = 5
 relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
@@ -203,6 +206,7 @@ def main():
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
+        clf.close()
         pass    
     GPIO.cleanup()
 
