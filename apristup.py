@@ -45,6 +45,7 @@ def UserAdd():
         deviceID = ''
 
         if response == 1 :
+            print("Odabrana opcija DA")
             #dodati korisnika u bazu kao novi unos
 
             while NewSecLevel != 1 or NewSecLevel != 2:
@@ -55,13 +56,16 @@ def UserAdd():
                 NewSecLevel = input()
 
                 if NewSecLevel == 1 :
+                    print("Sig. razina 1")
                     #Dodati sigurnosnu razinu u bazu
                     pass
                 elif NewSecLevel == 2 :
+                    print("Sig. razina 2")
                     #Dodati sigurnosnu razinu u bazu
                     pass
                 else:
                     #Neispravan unos!
+                    print("Neispravan unos!")
                     display.lcd_clear()
                     display.lcd_display_string("Neispravan", 1)
                     display.lcd_display_string("unos!", 2)
@@ -83,7 +87,6 @@ def UserAdd():
                     #čitanje uređaja
                     currenttime = time.time()
                     elapsedtime = currenttime - starttime
-                    print("Citanje")
                     deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
 
                     if elapsedtime > 5 :
@@ -97,6 +100,7 @@ def UserAdd():
                         break
                     elif deviceID != '':
                         #uspješno čitanje
+                        print("Uspjesno citanje!")
                         print(deviceID)
                         #Ako je čitanje uspješno vezati ID uređaja uz korisnika u bazi podataka
                         buzzerBeep()
@@ -110,6 +114,7 @@ def UserAdd():
             pass
         else:
             #Unos nijedne od dvije odgovarajuće opcije
+            print("Neispravan odgovor!")
             display.lcd_clear()
             display.lcd_display_string("Neispravan", 1)
             display.lcd_display_string("odgovor!", 2)
@@ -132,7 +137,6 @@ def NFCAddCheck():
     while True:
         currenttime = time.time()
         elapsedtime = currenttime - starttime
-        print("Citanje")
         UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
         #provjeravanje ovlasti za dodavanje
 
@@ -146,9 +150,12 @@ def NFCAddCheck():
             time.sleep(1)
             break
         elif UserID != '':
+            print("Uspjesno citanje!")
+            buzzerBeep()
             print(UserID)
+            readflag = 1
             #Nakon toga slijedit ce provjera ima li korisnik ovlasti za unos u bazi podataka
-            #Napomena sebi da ne zaboravim zastavicu staviti u jedan po završetku
+            #secLevel = 2
             if readflag == 1 :
                 if secLevel == 2 :
                     print("Prelazak na dodavanje")
@@ -163,7 +170,6 @@ def NFCAddCheck():
                     display.lcd_display_string("Za akciju!", 2)
                     time.sleep(1)
                     pass
-            buzzerBeep()
             break
     pass
 
@@ -193,11 +199,13 @@ def NFCReadAccess():
             time.sleep(1)
             break
         elif userID != '' :
+            print("uspjesno citanje!")
             print(userID)
             #uvjet da je čitanje uspješno
             #slijedi kod za provjeru postojanja korisnika
             #ako korisnik postoji u bazi slijedi otvaranje vrata
             buzzerBeep()
+            #provjera postojanja i dodavanje u if petlji
             break
 
 def buzzerBeep():
@@ -224,6 +232,7 @@ def main():
     try:
 
         while True:
+            print("Vrti se pocetni ekran")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
             unos = input()
