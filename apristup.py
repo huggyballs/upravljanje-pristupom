@@ -187,7 +187,6 @@ def NFCReadAccess():
         elapsedtime = currenttime - starttime
 
         userID = clf.connect(rdwr={'on-connect': lambda tag: False})
-        print(userID)
 
         if elapsedtime > 5 :
             #vrijeme isteklo, izlaz iz petlje
