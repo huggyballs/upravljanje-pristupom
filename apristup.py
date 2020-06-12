@@ -229,7 +229,7 @@ def NFCAddCheck():
                 pass
 
 def NFCReadAccess():
-    print("Čitanje uređaja")
+    print("Citanje uređaja")
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
     display.lcd_display_string("uredjaj!", 2)
