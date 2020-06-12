@@ -3,6 +3,7 @@
 
 import lcddriver
 import RPi.GPIO as GPIO
+import nfc
 
 import time
 import thread
@@ -13,6 +14,7 @@ import mysql
 import tty
 import termios
 import logging
+import traceback
 
 
 DEBUG=True
@@ -22,10 +24,77 @@ display = lcddriver.lcd()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+clf = nfc.ContactlessFrontend()
+clf.open('ttyAMA0')
 buzzer = 5
 relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
+
+try:
+    # Should be defined in Python 3
+    x = TimeoutError
+except:
+    # For Python 2
+    class TimeoutError(Exception):
+        def __init__(self, value="Timeout"):
+            self.value = value
+
+        def __str__(self):
+            return repr(self.value)
+
+class ExpectTimeout(object):
+    def __init__(self, seconds, print_traceback=True, mute=False):
+        self.seconds_before_timeout = seconds
+        self.original_trace_function = None
+        self.end_time = None
+        self.print_traceback = print_traceback
+        self.mute = mute
+
+    # Tracing function
+    def check_time(self, frame, event, arg):
+        if self.original_trace_function is not None:
+            self.original_trace_function(frame, event, arg)
+
+        current_time = time.time()
+        if current_time >= self.end_time:
+            raise TimeoutError
+
+        return self.check_time
+
+    # Begin of `with` block
+    def __enter__(self):
+        start_time = time.time()
+        self.end_time = start_time + self.seconds_before_timeout
+
+        self.original_trace_function = sys.gettrace()
+        sys.settrace(self.check_time)
+        return self
+
+    # End of `with` block
+    def __exit__(self, exc_type, exc_value, tb):
+        self.cancel()
+
+        if exc_type is None:
+            return
+
+        # An exception occurred
+        if self.print_traceback:
+            lines = ''.join(
+                traceback.format_exception(
+                    exc_type,
+                    exc_value,
+                    tb)).strip()
+        else:
+            lines = traceback.format_exception_only(
+                exc_type, exc_value)[-1].strip()
+
+        if not self.mute:
+            print("(expected)")
+        return True  # Ignore it
+
+    def cancel(self):
+        sys.settrace(self.original_trace_function)
 
 def UserAdd():
     print("Uspjesno citanje")
@@ -37,47 +106,77 @@ def UserAdd():
         display.lcd_display_string("1-DA 3-NE", 2)
         time.sleep(1)
         response = input()
+        #provjera želi li se dodati korisnika
         NewSecLevel = 0
+        deviceID = ''
 
         if response == 1 :
+            print("Odabrana opcija DA")
             #dodati korisnika u bazu kao novi unos
 
             while NewSecLevel != 1 or NewSecLevel != 2:
+                #traži definiranje nove sigurnosne razine
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna razina", 1)
                 display.lcd_display_string("1 ili 2?", 2)
                 NewSecLevel = input()
 
                 if NewSecLevel == 1 :
+                    print("Sig. razina 1")
                     #Dodati sigurnosnu razinu u bazu
                     pass
                 elif NewSecLevel == 2 :
+                    print("Sig. razina 2")
                     #Dodati sigurnosnu razinu u bazu
                     pass
                 else:
+                    #Neispravan unos!
+                    print("Neispravan unos!")
                     display.lcd_clear()
                     display.lcd_display_string("Neispravan", 1)
                     display.lcd_display_string("unos!", 2)
                     time.sleep(1)
                     pass
 
+            #upit za broj uređaja vezanih uz novododanog korisnika
             display.lcd_clear()
             display.lcd_display_string("Broj NFC", 1)
             display.lcd_display_string("uredjaja?", 2)
             i = 0
             DeviceNum = input()
+            deviceID = ''
 
             while i < DeviceNum:
                 print("Citanje novog NFC uredjaja")
-                #Čitanje
-                #Dodavanje uređaja u bazu
-                buzzerBeep()
+
+                with ExpectTimeout(5, print_traceback=False):
+                    try:
+                        deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                        print(deviceID)
+                        print("Uspjesno citanje!")
+                        buzzerBeep()
+                        #Ako je čitanje uspješno vezati ID uređaja uz korisnika u bazi podataka
+                        pass
+                    except:
+                        #isteklo vrijeme
+                        print("Neuspjesno citanje")
+                        display.lcd_clear()
+                        display.lcd_display_string("Neuspjesno", 1)
+                        display.lcd_display_string("Citanje!", 2)
+                        buzzerBeep()
+                        time.sleep(1)
+                        i = i - 1
+                        pass
+
                 i = i + 1
             pass
         elif response == 3 :
+            #Ukoliko se korisnik predomisli vraća se na početak
             print("Negativan odgovor!")
             pass
         else:
+            #Unos nijedne od dvije odgovarajuće opcije
+            print("Neispravan odgovor!")
             display.lcd_clear()
             display.lcd_display_string("Neispravan", 1)
             display.lcd_display_string("odgovor!", 2)
@@ -91,79 +190,73 @@ def NFCAddCheck():
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
     display.lcd_display_string("uredjaj", 2)
-    starttime = time.time()
-    readflag = 0
     secLevel = ''
     UserID = ''
 
     #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uređaj
+    #provjera ovlasti za dodavanje
 
-    while True:
-        currenttime = time.time()
-        elapsedtime = currenttime - starttime
-        print("Citanje")
-        #Dodati kod za čitanje uređaja/kartice
-        if elapsedtime > 5 :
-            print("Neuspjesno citanje")
-            display.lcd_clear()
-            display.lcd_display_string("Neuspjesno", 1)
-            display.lcd_display_string("Citanje!", 2)
-            buzzerBeep()
-            time.sleep(1)
-            break
-        elif elapsedtime > 6:
-            #uvjet iznad je tu samo privremeno
-            #Nakon potpune implementacije citanja uvjet ce biti da zastavica koja oznacava uspjesno citanje bude u jedinici
-            #Nakon toga slijedit ce provjera
-            #Napomena sebi da ne zaboravim zastavicu
-            buzzerBeep()
-            break
-
-    if readflag == 1 :
-        if secLevel == 2 :
-            print("Prelazak na dodavanje")
-            UserAdd()
-            #Ako korisnik ima odgovarajuću razinu prelazi se na dodavanje korisnika
-        else:
-            print("Ne postoje ovlasti")
-            display.lcd_clear()
-            display.lcd_display_string("Nemate ovlasti", 1)
-            display.lcd_display_string("Za akciju!", 2)
-            time.sleep(1)
-            pass 
-    pass
+    with ExpectTimeout(5, print_traceback=False):
+            try:
+                UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                print(UserID)
+                print("Uspjesno citanje!")
+                buzzerBeep()
+                #secLevel = 2
+                #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
+                if secLevel == 2 :
+                    print("Prelazak na dodavanje")
+                    UserAdd()
+                    #Ako korisnik ima odgovarajuću razinu prelazi se na dodavanje korisnika
+                    pass
+                else:
+                    #baza je vratila da korisnik ne može dodavati nove korisnike
+                    print("Ne postoje ovlasti")
+                    display.lcd_clear()
+                    display.lcd_display_string("Nemate ovlasti", 1)
+                    display.lcd_display_string("Za akciju!", 2)
+                    time.sleep(1)
+                    pass
+                pass
+            except:
+                #isteklo vrijeme
+                print("Neuspjesno citanje")
+                display.lcd_clear()
+                display.lcd_display_string("Neuspjesno", 1)
+                display.lcd_display_string("Citanje!", 2)
+                buzzerBeep()
+                time.sleep(1)
+                pass
 
 def NFCReadAccess():
     print("Čitanje uređaja")
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
     display.lcd_display_string("uredjaj!", 2)
-    starttime = time.time()
-    readFlag = 0
     userID = ''
 
     #slijedi pokušaj čitanja NFC-a u trajanju od 5 sekundi
-    while True:
-        currenttime = time.time()
-        elapsedtime = currenttime - starttime
-        #kod za čitanje kartice ovdje
-        if elapsedtime > 5 :
-            print("Neuspjesno citanje")
+    
+    with ExpectTimeout(5, print_traceback=False):
+        try:
+            userID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            print(userID)
+            print("Uspjesno citanje!")
+            buzzerBeep()
+            #ovdje ide provjera postojanja korisnika u bazi
+            #ako korisnik postoji u bazi pozvat ce se funkcija za otvaranje vrata
+            pass
+        except:
+            print("Nesto ne valja!")
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
             buzzerBeep()
             time.sleep(1)
-            break
-        elif elapsedtime > 6 :
-            #privremen uvjet
-            #uvjet stvarni ce biti zastavica u jedinici
-            #slijedi kod za provjeru postojanja korisnika
-            #ako korisnik postoji u bazi slijedi otvaranje vrata
-            buzzerBeep()
-            break
+            pass
 
 def buzzerBeep():
+    #HIGH odgovara jedinci i zvuku a LOW nuli i tišini
     GPIO.output(buzzer,GPIO.HIGH)
     print("BIIIIP")
     time.sleep(0.5)
@@ -173,6 +266,7 @@ def buzzerBeep():
     pass
 
 def relayOpen():
+    #HIGH odgovara jedinci i otključanikm vratima a LOW nuli i ponovnom zaključavanju
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
     buzzerBeep()
@@ -185,24 +279,29 @@ def main():
     try:
 
         while True:
+            print("Vrti se pocetni ekran")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
             unos = input()
             if unos == 1 :
+                #kod za pristup funkciji za unos korisnika. Može biti bilo koji
                 print("Pokusaj dodavanja korisnika")
                 NFCAddCheck()
                 pass
             elif unos == 1234 :
+                #unosom pina potvrđujemo pokušaj pristupa vratima
                 print("Unesen tocan PIN")
                 NFCReadAccess()
                 pass
             else:
+                #u slučaju pogrešnog unosa logirati pokušaj i slati upozorenje
                 print("Netocan unos")
                 display.lcd_clear()
                 display.lcd_display_string("Netocan unos!", 1)
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
+        clf.close()
         pass    
     GPIO.cleanup()
 
