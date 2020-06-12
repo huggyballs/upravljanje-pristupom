@@ -106,7 +106,7 @@ def UserAdd():
         display.lcd_display_string("1-DA 3-NE", 2)
         time.sleep(1)
         response = input()
-        #provjera želi li se dodati korisnika
+        #provjera zeli li se dodati korisnika
         NewSecLevel = 0
         deviceID = ''
 
@@ -115,7 +115,7 @@ def UserAdd():
             #dodati korisnika u bazu kao novi unos
 
             while NewSecLevel != 1 or NewSecLevel != 2:
-                #traži definiranje nove sigurnosne razine
+                #trazi definiranje nove sigurnosne razine
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna razina", 1)
                 display.lcd_display_string("1 ili 2?", 2)
@@ -138,7 +138,7 @@ def UserAdd():
                     time.sleep(1)
                     pass
 
-            #upit za broj uređaja vezanih uz novododanog korisnika
+            #upit za broj uredjaja vezanih uz novododanog korisnika
             display.lcd_clear()
             display.lcd_display_string("Broj NFC", 1)
             display.lcd_display_string("uredjaja?", 2)
@@ -155,7 +155,7 @@ def UserAdd():
                         print(deviceID)
                         print("Uspjesno citanje!")
                         buzzerBeep()
-                        #Ako je čitanje uspješno vezati ID uređaja uz korisnika u bazi podataka
+                        #Ako je citanje uspjesno vezati ID uredjaja uz korisnika u bazi podataka
                         pass
                     except:
                         #isteklo vrijeme
@@ -171,11 +171,11 @@ def UserAdd():
                 i = i + 1
             pass
         elif response == 3 :
-            #Ukoliko se korisnik predomisli vraća se na početak
+            #Ukoliko se korisnik predomisli vraca se na pocetak
             print("Negativan odgovor!")
             pass
         else:
-            #Unos nijedne od dvije odgovarajuće opcije
+            #Unos nijedne od dvije odgovarajuce opcije
             print("Neispravan odgovor!")
             display.lcd_clear()
             display.lcd_display_string("Neispravan", 1)
@@ -193,7 +193,7 @@ def NFCAddCheck():
     secLevel = ''
     UserID = ''
 
-    #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uređaj
+    #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uredjaj
     #provjera ovlasti za dodavanje
 
     with ExpectTimeout(5, print_traceback=False):
@@ -207,10 +207,10 @@ def NFCAddCheck():
                 if secLevel == 2 :
                     print("Prelazak na dodavanje")
                     UserAdd()
-                    #Ako korisnik ima odgovarajuću razinu prelazi se na dodavanje korisnika
+                    #Ako korisnik ima odgovarajucu razinu prelazi se na dodavanje korisnika
                     pass
                 else:
-                    #baza je vratila da korisnik ne može dodavati nove korisnike
+                    #baza je vratila da korisnik ne moze dodavati nove korisnike
                     print("Ne postoje ovlasti")
                     display.lcd_clear()
                     display.lcd_display_string("Nemate ovlasti", 1)
@@ -235,7 +235,7 @@ def NFCReadAccess():
     display.lcd_display_string("uredjaj!", 2)
     userID = ''
 
-    #slijedi pokušaj čitanja NFC-a u trajanju od 5 sekundi
+    #slijedi pokusaj citanja NFC-a u trajanju od 5 sekundi
     
     with ExpectTimeout(5, print_traceback=False):
         try:
@@ -256,7 +256,7 @@ def NFCReadAccess():
             pass
 
 def buzzerBeep():
-    #HIGH odgovara jedinci i zvuku a LOW nuli i tišini
+    #HIGH odgovara jedinci i zvuku a LOW nuli i tisini
     GPIO.output(buzzer,GPIO.HIGH)
     print("BIIIIP")
     time.sleep(0.5)
@@ -266,7 +266,7 @@ def buzzerBeep():
     pass
 
 def relayOpen():
-    #HIGH odgovara jedinci i otključanikm vratima a LOW nuli i ponovnom zaključavanju
+    #HIGH odgovara jedinci i otkljucanim vratima a LOW nuli i ponovnom zakljucavanju
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
     buzzerBeep()
@@ -284,17 +284,17 @@ def main():
             display.lcd_display_string("Unesite PIN:", 1)
             unos = input()
             if unos == 1 :
-                #kod za pristup funkciji za unos korisnika. Može biti bilo koji
+                #kod za pristup funkciji za unos korisnika. Moze biti bilo koji
                 print("Pokusaj dodavanja korisnika")
                 NFCAddCheck()
                 pass
             elif unos == 1234 :
-                #unosom pina potvrđujemo pokušaj pristupa vratima
+                #unosom pina potvrdjujemo pokusaj pristupa vratima
                 print("Unesen tocan PIN")
                 NFCReadAccess()
                 pass
             else:
-                #u slučaju pogrešnog unosa logirati pokušaj i slati upozorenje
+                #u slucaju pogresnog unosa logirati pokusaj i slati upozorenje
                 print("Netocan unos")
                 display.lcd_clear()
                 display.lcd_display_string("Netocan unos!", 1)
