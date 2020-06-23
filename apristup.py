@@ -11,11 +11,31 @@ import thread
 import os
 import sys
 import mysql
+import mysql.connector
 import tty
 import termios
 import logging
 import traceback
 
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    psswd="raspberry",
+    database="dtbs"
+    )
+mycursor = db.cursor()
+
+try:
+    #kod za dodavanje tablice s korisnicima
+    pass
+except:
+    pass
+    #tablica postoji pa se ide dalje
+try:
+    #kod za dodavanje podtablice sa NFC uredjajima
+    pass
+except:
+    pass
 
 DEBUG=True
 VERBOSE=True
