@@ -27,11 +27,13 @@ mycursor = db.cursor()
 
 try:
     #kod za dodavanje tablice s korisnicima
+    mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL)")
     pass
 except:
     pass
     #tablica postoji pa se ide dalje
 try:
+    mycursor.execute("CREATE TABLE Devices (DeviceNum int PRIMARY KEY NOT NULL AUTO_INCREMENT, UserId int NOT NULL, DeviceId VARCHAR(25) NOT NULL)")
     #kod za dodavanje podtablice sa NFC uredjajima
     pass
 except:
