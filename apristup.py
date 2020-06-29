@@ -134,7 +134,6 @@ def UserAdd():
 
         if response == 1 :
             print("Odabrana opcija DA")
-            #dodati korisnika u bazu kao novi unos
 
             while NewSecLevel != 1 or NewSecLevel != 2:
                 #trazi definiranje nove sigurnosne razine
@@ -146,10 +145,16 @@ def UserAdd():
                 if NewSecLevel == 1 :
                     print("Sig. razina 1")
                     #Dodati sigurnosnu razinu u bazu
+                    mycursor.execute("INSERT INTO Users (Seclev) VALUES (%s,)", (1))
+                    last_id = mycursor.lastrowid
+                    last_id = int(last_id)
                     pass
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
                     #Dodati sigurnosnu razinu u bazu
+                    mycursor.execute("INSERT INTO Users (Seclev) VALUES (%s,)", (2))
+                    last_id = mycursor.lastrowid
+                    last_id = int(last_id)
                     pass
                 else:
                     #Neispravan unos!
@@ -177,7 +182,11 @@ def UserAdd():
                         print(deviceID)
                         print("Uspjesno citanje!")
                         buzzerBeep()
+
                         #Ako je citanje uspjesno vezati ID uredjaja uz korisnika u bazi podataka
+
+                        mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (last_id, deviceID))
+
                         pass
                     except:
                         #isteklo vrijeme
@@ -226,6 +235,15 @@ def NFCAddCheck():
                 buzzerBeep()
                 #secLevel = 2
                 #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
+
+                mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
+                usid_int = mycursor.fetchone()
+                usid_int = int(''.join(map(str, usid_int)))
+                print(usid_int)
+                mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
+                secLevel = mycursor.fetchone()
+                secLevel = int(''.join(map(str, secLevel)))
+
                 if secLevel == 2 :
                     print("Prelazak na dodavanje")
                     UserAdd()
@@ -265,8 +283,16 @@ def NFCReadAccess():
             print(userID)
             print("Uspjesno citanje!")
             buzzerBeep()
+
             #ovdje ide provjera postojanja korisnika u bazi
             #ako korisnik postoji u bazi pozvat ce se funkcija za otvaranje vrata
+
+            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (userID,))
+            usid_int = mycursor.fetchone()
+            usid_int = int(''.join(map(str, usid_int)))
+            print(usid_int)
+            relayOpen()
+
             pass
         except:
             print("Nesto ne valja!")
@@ -292,6 +318,10 @@ def relayOpen():
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
     buzzerBeep()
+    display.lcd_clear()
+    display.lcd_display_string("Vrata su ", 1)
+    display.lcd_display_string("otkljucana!", 2)
+    time.sleep(1)
     time.sleep(5)
     GPIO.output(buzzer,GPIO.LOW)
     print("Zakljucano")
@@ -304,6 +334,16 @@ def main():
             print("Vrti se pocetni ekran")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
+
+            #ovo ispod samo za provjeru pravilnog rada baze. Poslije ukloniti
+            mycursor.execute("SELECT * FROM Users")
+            for x in mycursor:
+                print(x)
+            
+            mycursor.execute("SELECT * FROM Devices")
+            for x in mycursor:
+                print(x)
+
             unos = input()
             if unos == 1 :
                 #kod za pristup funkciji za unos korisnika. Moze biti bilo koji
