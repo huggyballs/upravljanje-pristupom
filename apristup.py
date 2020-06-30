@@ -27,7 +27,7 @@ mycursor = db.cursor()
 
 try:
     #kod za dodavanje tablice s korisnicima
-    mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL)")
+    mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL, role VARCHAR(10) NOT NULL)")
     pass
 except:
     pass
@@ -145,14 +145,14 @@ def UserAdd():
                 if NewSecLevel == 1 :
                     print("Sig. razina 1")
                     #Dodati sigurnosnu razinu u bazu
-                    mycursor.execute("INSERT INTO Users (Seclev) VALUES (%s,)", (1))
+                    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
                     pass
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
                     #Dodati sigurnosnu razinu u bazu
-                    mycursor.execute("INSERT INTO Users (Seclev) VALUES (%s,)", (2))
+                    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
                     pass
