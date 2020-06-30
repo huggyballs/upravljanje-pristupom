@@ -13,15 +13,15 @@ import sys
 import mysql
 import mysql.connector
 import tty
-import termios
+#import termios
 import logging
 import traceback
 
 db = mysql.connector.connect(
     host="localhost",
-    user="root",
-    psswd="raspberry",
-    database="dtbs"
+    user="emovis",
+    psswd="emovis",
+    database="kontrolapristupa"
     )
 mycursor = db.cursor()
 
