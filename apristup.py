@@ -10,7 +10,6 @@ import thread
 
 import os
 import sys
-import mysql
 import mysql.connector
 import tty
 #import termios
