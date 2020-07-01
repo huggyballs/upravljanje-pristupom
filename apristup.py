@@ -12,7 +12,6 @@ import os
 import sys
 import mysql.connector
 import tty
-#import termios
 import logging
 import traceback
 
@@ -43,7 +42,7 @@ try:
     #ovo obrisati nakon prvog pokretanja
     #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
     #ajdi = mycursor.lastrowid
-    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, "Type2Tag ID=1ED3A622"))
+    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, 'Type2Tag ID=1ED3A622'))
     pass
 except:
     pass
