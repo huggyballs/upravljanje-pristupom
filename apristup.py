@@ -19,7 +19,7 @@ import traceback
 db = mysql.connector.connect(
     host="localhost",
     user="emovis",
-    psswd="emovis",
+    passwd="emovis",
     database="kontrolapristupa"
     )
 mycursor = db.cursor()
