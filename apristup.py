@@ -354,9 +354,6 @@ def main():
             for x in mycursor:
                 print(x)
 
-            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", ('Type2Tag ID=1ED3A622',))
-            print(mycursor.fetchone())
-
             unos = input()
             if unos == 1 :
                 #kod za pristup funkciji za unos korisnika. Moze biti bilo koji
