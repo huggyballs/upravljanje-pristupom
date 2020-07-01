@@ -42,7 +42,7 @@ try:
     #ovo obrisati nakon prvog pokretanja
     #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
     #ajdi = mycursor.lastrowid
-    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, 'Type2Tag ID=1ED3A622'))
+    #mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, 'Type2Tag ID=1ED3A622'))
     pass
 except:
     pass
@@ -297,7 +297,6 @@ def NFCReadAccess():
 
             #ovdje ide provjera postojanja korisnika u bazi
             #ako korisnik postoji u bazi pozvat ce se funkcija za otvaranje vrata
-
             mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (userID,))
             usid_int = mycursor.fetchone()
             usid_int = int(''.join(map(str, usid_int)))
