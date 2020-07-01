@@ -50,8 +50,6 @@ finally:
     db.commit()
     pass
 
-mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", ('Type2Tag ID=1ED3A622',))
-
 DEBUG=True
 VERBOSE=True
 
@@ -355,6 +353,9 @@ def main():
             mycursor.execute("SELECT * FROM Devices")
             for x in mycursor:
                 print(x)
+
+            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", ('Type2Tag ID=1ED3A622',))
+            print(mycursor.fetchone())
 
             unos = input()
             if unos == 1 :
