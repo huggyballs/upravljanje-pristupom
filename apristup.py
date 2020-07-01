@@ -41,9 +41,9 @@ except:
     pass
 try:
     #ovo obrisati nakon prvog pokretanja
-    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
-    ajdi = mycursor.lastrowid
-    mycursor.execute("INSERT INTO Devices (UserId, DeviceId)", (ajdi, "Type2Tag ID=1ED3A622"))
+    #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
+    #ajdi = mycursor.lastrowid
+    mycursor.execute("INSERT INTO Devices (UserId, DeviceId)", (2, "Type2Tag ID=1ED3A622"))
     pass
 except:
     pass
