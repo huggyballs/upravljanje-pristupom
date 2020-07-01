@@ -29,6 +29,7 @@ try:
     mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL, role VARCHAR(10) NOT NULL)")
     pass
 except:
+    print("postoji")
     pass
     #tablica postoji pa se ide dalje
 try:
@@ -36,6 +37,7 @@ try:
     #kod za dodavanje podtablice sa NFC uredjajima
     pass
 except:
+    print("postoji")
     pass
 try:
     #ovo obrisati nakon prvog pokretanja
