@@ -43,13 +43,14 @@ try:
     #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
     #ajdi = mycursor.lastrowid
     #mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, 'Type2Tag ID=1ED3A622'))
-    mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", ('Type2Tag ID=1ED3A622',))
     pass
 except:
     pass
 finally:
     db.commit()
     pass
+
+mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", ('Type2Tag ID=1ED3A622',))
 
 DEBUG=True
 VERBOSE=True
