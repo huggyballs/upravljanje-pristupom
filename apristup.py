@@ -125,7 +125,7 @@ try:
         try:
             ID = clf.connect(rdwr={'on-connect': lambda tag: False})
             print(ID)
-            ID2 = ID
+            ID2 = str(ID)
             print(ID2)
             print("Uspjesno citanje!")
 
