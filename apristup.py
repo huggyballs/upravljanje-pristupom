@@ -120,7 +120,7 @@ class ExpectTimeout(object):
 
 try:
     #ovo obrisati nakon prvog pokretanja
-    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
+    #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
     with ExpectTimeout(5, print_traceback=False):
         try:
             ID = clf.connect(rdwr={'on-connect': lambda tag: False})
@@ -132,7 +132,7 @@ try:
             print("Nesto ne valja!")
             pass
         pass
-    red = mycursor.lastrowid
+    red = 1
     mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID))
 except:
     pass
