@@ -38,17 +38,6 @@ try:
 except:
     print("postoji")
     pass
-#try:
-    #ovo obrisati nakon prvog pokretanja
-    #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s,%s)", (2, "original"))
-    #ajdi = mycursor.lastrowid
-    #mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (2, 'Type2Tag ID=1ED3A622'))
-    #pass
-#except:
-    #pass
-#finally:
-    #db.commit()
-    #pass
 
 DEBUG=True
 VERBOSE=True
@@ -128,6 +117,28 @@ class ExpectTimeout(object):
 
     def cancel(self):
         sys.settrace(self.original_trace_function)
+
+try:
+    #ovo obrisati nakon prvog pokretanja
+    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
+    with ExpectTimeout(5, print_traceback=False):
+        try:
+            ID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            print(ID)
+            print("Uspjesno citanje!")
+
+            pass
+        except:
+            print("Nesto ne valja!")
+            pass
+        pass
+    red = mycursor.lastrowid
+    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID))
+except:
+    pass
+finally:
+    db.commit()
+    pass
 
 def UserAdd():
     print("Uspjesno citanje")
