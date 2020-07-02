@@ -118,29 +118,29 @@ class ExpectTimeout(object):
     def cancel(self):
         sys.settrace(self.original_trace_function)
 
-try:
+#try:
     #ovo obrisati nakon prvog pokretanja
     #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
-    with ExpectTimeout(5, print_traceback=False):
-        try:
-            ID = clf.connect(rdwr={'on-connect': lambda tag: False})
-            print(ID)
-            ID2 = str(ID)
-            print(ID2)
-            print("Uspjesno citanje!")
+    #with ExpectTimeout(5, print_traceback=False):
+        #try:
+            #ID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            #print(ID)
+            #ID2 = str(ID)
+            #print(ID2)
+            #print("Uspjesno citanje!")
 
-            pass
-        except:
-            print("Nesto ne valja!")
-            pass
-        pass
-    red = 1
-    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID2))
-except:
-    pass
-finally:
-    db.commit()
-    pass
+            #pass
+        #except:
+            #print("Nesto ne valja!")
+            #pass
+        #pass
+    #red = 1
+    #mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID2))
+#except:
+    #pass
+#finally:
+    #db.commit()
+    #pass
 
 def UserAdd():
     print("Uspjesno citanje")
@@ -203,6 +203,7 @@ def UserAdd():
                 with ExpectTimeout(5, print_traceback=False):
                     try:
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                        deviceID = str(deviceID)
                         print(deviceID)
                         print("Uspjesno citanje!")
                         buzzerBeep()
@@ -254,6 +255,7 @@ def NFCAddCheck():
     with ExpectTimeout(5, print_traceback=False):
             try:
                 UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                UserID = str(UserID)
                 print(UserID)
                 print("Uspjesno citanje!")
                 buzzerBeep()
@@ -304,6 +306,7 @@ def NFCReadAccess():
     with ExpectTimeout(5, print_traceback=False):
         try:
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            userID = str(userID)
             print(userID)
             print("Uspjesno citanje!")
             buzzerBeep()
