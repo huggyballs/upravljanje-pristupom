@@ -303,7 +303,7 @@ def NFCReadAccess():
 
     #slijedi pokusaj citanja NFC-a u trajanju od 5 sekundi
     
-    with ExpectTimeout(5, print_traceback=False):
+    with ExpectTimeout(10, print_traceback=False):
         try:
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
             userID = str(userID)
@@ -347,7 +347,6 @@ def relayOpen():
     display.lcd_clear()
     display.lcd_display_string("Vrata su ", 1)
     display.lcd_display_string("otkljucana!", 2)
-    time.sleep(1)
     time.sleep(5)
     GPIO.output(buzzer,GPIO.LOW)
     print("Zakljucano")
