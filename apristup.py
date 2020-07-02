@@ -125,6 +125,8 @@ try:
         try:
             ID = clf.connect(rdwr={'on-connect': lambda tag: False})
             print(ID)
+            ID2 = ID
+            print(ID2)
             print("Uspjesno citanje!")
 
             pass
@@ -133,7 +135,7 @@ try:
             pass
         pass
     red = 1
-    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID))
+    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID2))
 except:
     pass
 finally:
