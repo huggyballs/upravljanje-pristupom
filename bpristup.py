@@ -128,6 +128,7 @@ def DeviceAdd():
     DeviceNum = input()
     deviceID = ''
     last_id = mycursor.lastrowid
+    print(last_id)
 
     while i < DeviceNum:
         print("Citanje novog NFC uredjaja")
