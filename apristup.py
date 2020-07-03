@@ -172,6 +172,7 @@ def UserAdd():
             display.lcd_display_string("Broj NFC", 1)
             display.lcd_display_string("uredjaja?", 2)
             i = 0
+            print("Broj uredjaja?")
             DeviceNum = input()
             deviceID = ''
 
