@@ -231,47 +231,45 @@ def NFCAddCheck():
     #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uredjaj
     #provjera ovlasti za dodavanje
 
-    with ExpectTimeout(5, print_traceback=False):
-            try:
-                UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
-                UserID = str(UserID)
-                print(UserID)
-                print("Uspjesno citanje!")
-                buzzerBeep()
-                #secLevel = 2
-                #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
+    try:
+        UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+        UserID = str(UserID)
+        print(UserID)
+        print("Uspjesno citanje!")
+        buzzerBeep()
+        #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
 
-                mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
-                usid_int = mycursor.fetchone()
-                usid_int = int(''.join(map(str, usid_int)))
-                print(usid_int)
-                mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
-                secLevel = mycursor.fetchone()
-                secLevel = int(''.join(map(str, secLevel)))
+        mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
+        usid_int = mycursor.fetchone()
+        usid_int = int(''.join(map(str, usid_int)))
+        print(usid_int)
+        mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
+        secLevel = mycursor.fetchone()
+        secLevel = int(''.join(map(str, secLevel)))
 
-                if secLevel == 2 :
-                    print("Prelazak na dodavanje")
-                    UserAdd()
-                    #Ako korisnik ima odgovarajucu razinu prelazi se na dodavanje korisnika
-                    pass
-                else:
-                    #baza je vratila da korisnik ne moze dodavati nove korisnike
-                    print("Ne postoje ovlasti")
-                    display.lcd_clear()
-                    display.lcd_display_string("Nemate ovlasti", 1)
-                    display.lcd_display_string("Za akciju!", 2)
-                    time.sleep(1)
-                    pass
-                pass
-            except:
-                #isteklo vrijeme
-                print("Neuspjesno citanje")
-                display.lcd_clear()
-                display.lcd_display_string("Neuspjesno", 1)
-                display.lcd_display_string("Citanje!", 2)
-                buzzerBeep()
-                time.sleep(1)
-                pass
+        if secLevel == 2 :
+            print("Prelazak na dodavanje")
+            UserAdd()
+            #Ako korisnik ima odgovarajucu razinu prelazi se na dodavanje korisnika
+            pass
+        else:
+            #baza je vratila da korisnik ne moze dodavati nove korisnike
+            print("Ne postoje ovlasti")
+            display.lcd_clear()
+            display.lcd_display_string("Nemate ovlasti", 1)
+            display.lcd_display_string("Za akciju!", 2)
+            time.sleep(1)
+            pass
+        pass
+    except:
+        #isteklo vrijeme
+        print("Neuspjesno citanje")
+        display.lcd_clear()
+        display.lcd_display_string("Neuspjesno", 1)
+        display.lcd_display_string("Citanje!", 2)
+        buzzerBeep()
+        time.sleep(1)
+        pass
 
 def NFCReadAccess():
     print("Citanje uredjaja")
