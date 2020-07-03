@@ -122,7 +122,7 @@ def UserAdd():
     print("Uspjesno citanje")
     response = ''
 
-    while response != 1 or response != 3:
+    while True:
         display.lcd_clear()
         display.lcd_display_string("Dodati korisnika", 1)
         display.lcd_display_string("1-DA 3-NE", 2)
@@ -136,7 +136,7 @@ def UserAdd():
         if response == 1 :
             print("Odabrana opcija DA")
 
-            while NewSecLevel != 1 or NewSecLevel != 2:
+            while True:
                 #trazi definiranje nove sigurnosne razine
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna razina", 1)
@@ -150,14 +150,14 @@ def UserAdd():
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
-                    pass
+                    return False
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
-                    pass
+                    return False
                 else:
                     #Neispravan unos!
                     print("Neispravan unos!")
@@ -202,13 +202,12 @@ def UserAdd():
                         time.sleep(1)
                         i = i - 1
                         pass
-
                 i = i + 1
-            pass
+            return False
         elif response == 3 :
             #Ukoliko se korisnik predomisli vraca se na pocetak
             print("Negativan odgovor!")
-            pass
+            return False
         else:
             #Unos nijedne od dvije odgovarajuce opcije
             print("Neispravan odgovor!")
