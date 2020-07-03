@@ -118,30 +118,6 @@ class ExpectTimeout(object):
     def cancel(self):
         sys.settrace(self.original_trace_function)
 
-#try:
-    #ovo obrisati nakon prvog pokretanja
-    #mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
-    #with ExpectTimeout(5, print_traceback=False):
-        #try:
-            #ID = clf.connect(rdwr={'on-connect': lambda tag: False})
-            #print(ID)
-            #ID2 = str(ID)
-            #print(ID2)
-            #print("Uspjesno citanje!")
-
-            #pass
-        #except:
-            #print("Nesto ne valja!")
-            #pass
-        #pass
-    #red = 1
-    #mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (red, ID2))
-#except:
-    #pass
-#finally:
-    #db.commit()
-    #pass
-
 def UserAdd():
     print("Uspjesno citanje")
     response = 0
@@ -151,6 +127,7 @@ def UserAdd():
         display.lcd_display_string("Dodati korisnika", 1)
         display.lcd_display_string("1-DA 3-NE", 2)
         time.sleep(1)
+        print("Dodati korisnika? 1-da 3-ne")
         response = input()
         #provjera zeli li se dodati korisnika
         NewSecLevel = 0
@@ -164,6 +141,7 @@ def UserAdd():
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna razina", 1)
                 display.lcd_display_string("1 ili 2?", 2)
+                print("Sigurnosna razina 1 ili 2?")
                 NewSecLevel = input()
 
                 if NewSecLevel == 1 :
