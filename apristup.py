@@ -120,7 +120,7 @@ class ExpectTimeout(object):
 
 def UserAdd():
     print("Uspjesno citanje")
-    response = 0
+    response = ''
 
     while response != 1 or response != 3:
         display.lcd_clear()
