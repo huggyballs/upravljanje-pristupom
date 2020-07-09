@@ -54,6 +54,17 @@ GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
 
 try:
+    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
+    lastrow = mycursor.lastrowid
+    ajdi = clf.connect(rdwr={'on-connect': lambda tag: False})
+    ajdi = str(ajdi)
+    print(ajdi)
+    mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s, %s)", (lastrow, ajdi))
+except:
+    print("Ne valja")
+    pass
+
+try:
     # Should be defined in Python 3
     x = TimeoutError
 except:
