@@ -37,10 +37,24 @@ try:
     pass
 except:
     print("postoji")
-    pass
+    
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
-DEBUG=True
-VERBOSE=True
+handlerinfo = logging.FileHandler('info.log')
+handlerinfo.setFormatter(formatter)
+handlerinfo.setLevel(logging.DEBUG)
+handleraction = logging.FileHandler('interactions.log')
+handleraction.setFormatter(formatter)
+handleraction.setLevel(logging.INFO)
+handlerwarning = logging.FileHandler('warnings.log')
+handlerwarning.setFormatter(formatter)
+handlerwarning.setLevel(logging.WARNING)
+
+logger.addHandler(handlerwarning)
+logger.addHandler(handlerinfo)
+logger.addHandler(handleraction)
 
 display = lcddriver.lcd()
 
