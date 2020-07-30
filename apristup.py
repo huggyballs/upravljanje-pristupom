@@ -167,19 +167,24 @@ def UserAdd():
                 display.lcd_display_string("Sigurnosna razina", 1)
                 display.lcd_display_string("1 ili 2?", 2)
                 print("Sigurnosna razina 1 ili 2?")
+                logger.debug('Zatrazen unos sigurnosne razine novog korisnika.')
                 NewSecLevel = input()
 
                 if NewSecLevel == 1 :
                     print("Sig. razina 1")
+                    logger.debug('Potvrdjena sigurnosna razina 1')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
+                    logger.info('Dodan novi korisnik')
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
                     return False
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
+                    logger.debug('potvrdjena sigurnosna razina 2')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
+                    logger.info('Dodan novi korisnik')
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
                     return False
@@ -199,6 +204,7 @@ def UserAdd():
             i = 0
             print("Broj uredjaja?")
             DeviceNum = input()
+            logger.debug('Novom korisniku dodijeljeno {} uredjaja'.format(DeviceNum))
             deviceID = ''
 
             while i < DeviceNum:
@@ -215,11 +221,13 @@ def UserAdd():
                         #Ako je citanje uspjesno vezati ID uredjaja uz korisnika u bazi podataka
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (last_id, deviceID))
+                        logger.info('Korisniku dodijeljen novi uredjaj')
 
                         pass
                     except:
                         #isteklo vrijeme
                         print("Neuspjesno citanje")
+                        logger.warning('Neuspjesno dodavanja novog uredjaja')
                         display.lcd_clear()
                         display.lcd_display_string("Neuspjesno", 1)
                         display.lcd_display_string("Citanje!", 2)
@@ -246,6 +254,7 @@ def UserAdd():
 
 def NFCAddCheck():
     print("Provjera sigurnosne razine NFC tagom")
+    logger.debug('Pokusaj dodavanja novog korisnika')
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
     display.lcd_display_string("uredjaj", 2)
@@ -273,12 +282,14 @@ def NFCAddCheck():
 
         if secLevel == 2 :
             print("Prelazak na dodavanje")
+            logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
             UserAdd()
             #Ako korisnik ima odgovarajucu razinu prelazi se na dodavanje korisnika
             pass
         else:
             #baza je vratila da korisnik ne moze dodavati nove korisnike
             print("Ne postoje ovlasti")
+            logger.warning('Korisnik {} je pokusao dodati nove korisnike a nema ovlasti za to'.format(usid_int))
             display.lcd_clear()
             display.lcd_display_string("Nemate ovlasti", 1)
             display.lcd_display_string("Za akciju!", 2)
@@ -286,8 +297,8 @@ def NFCAddCheck():
             pass
         pass
     except:
-        #isteklo vrijeme
         print("Neuspjesno citanje")
+        logger.warning('Neuspjesna provjera sigurnosnih ovlasti')
         display.lcd_clear()
         display.lcd_display_string("Neuspjesno", 1)
         display.lcd_display_string("Citanje!", 2)
@@ -297,6 +308,7 @@ def NFCAddCheck():
 
 def NFCReadAccess():
     print("Citanje uredjaja")
+    logger.debug('Pokusaj ulaska')
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
     display.lcd_display_string("uredjaj!", 2)
@@ -318,11 +330,13 @@ def NFCReadAccess():
             usid_int = mycursor.fetchone()
             usid_int = int(''.join(map(str, usid_int)))
             print(usid_int)
+            logger.info('Uspjesno ostvaren pristup od strane korisnika {}'.format(usid_int))
             relayOpen()
 
             pass
         except:
             print("Nesto ne valja!")
+            logger.warning('Neuspjesan pokusaj ulaska')
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
@@ -360,6 +374,7 @@ def main():
             print("Vrti se pocetni ekran")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
+            logger.debug('Program je na pocetnom ekranu')
 
             #ovo ispod samo za provjeru pravilnog rada baze. Poslije ukloniti
             mycursor.execute("SELECT * FROM Users")
