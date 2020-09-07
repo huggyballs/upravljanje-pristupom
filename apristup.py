@@ -351,7 +351,11 @@ def NFCReadAccess():
             time.sleep(1)
             pass
 
+def resetFunction():
+    pass
+
 def lockStatus():
+    
     pass
 
 def buzzerBeep():
@@ -409,6 +413,10 @@ def main():
             elif unos == 3:
                 print("Provjera stanja brave")
                 lockStatus()
+                pass
+            elif unos == 7:
+                print("Resetiranje cijele tablice")
+                resetFunction()
                 pass
             else:
                 #u slucaju pogresnog unosa logirati pokusaj i slati upozorenje
