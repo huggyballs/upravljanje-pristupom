@@ -355,8 +355,16 @@ def resetFunction():
     pass
 
 def lockStatus():
-    
-    pass
+    if GPIO.input(relay):
+        print("Relej u HIGH")
+        display.lcd_clear()
+        display.lcd_display_string("Brava je otkljucana!", 1)
+        pass
+    else:
+        print("Relej u LOW")
+        display.lcd_clear()
+        display.lcd_display_string("Brava je zakljucana!", 1)
+        pass
 
 def buzzerBeep():
     #HIGH odgovara jedinci i zvuku a LOW nuli i tisini
