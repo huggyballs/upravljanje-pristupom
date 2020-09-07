@@ -3,7 +3,6 @@
 
 #zadaci za dodati:
 #reset funkcija
-#provjera stanja brave
 #slanje maila za upozorenja
 
 import lcddriver
