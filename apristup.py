@@ -1,6 +1,11 @@
 #glavni program
 #upravljanje zaslonom i zvukom
 
+#zadaci za dodati:
+#reset funkcija
+#provjera stanja brave
+#slanje maila za upozorenja
+
 import lcddriver
 import RPi.GPIO as GPIO
 import nfc
@@ -67,6 +72,7 @@ relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
 
+#ovo premjestiti kad dodjes do reseta
 try:
     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
     lastrow = mycursor.lastrowid
