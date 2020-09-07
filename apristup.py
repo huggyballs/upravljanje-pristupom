@@ -18,6 +18,7 @@ import sys
 import mysql.connector
 import tty
 import logging
+from logging.handlers import RotatingFileHandler
 import traceback
 
 db = mysql.connector.connect(
@@ -47,13 +48,13 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
 
-handlerinfo = logging.FileHandler('info.log')
+handlerinfo = RotatingFileHandler('info.log', maxBytes=100000, backupCount=2)
 handlerinfo.setFormatter(formatter)
 handlerinfo.setLevel(logging.DEBUG)
-handleraction = logging.FileHandler('interactions.log')
+handleraction = RotatingFileHandler('interactions.log', maxBytes=100000, backupCount=2)
 handleraction.setFormatter(formatter)
 handleraction.setLevel(logging.INFO)
-handlerwarning = logging.FileHandler('warnings.log')
+handlerwarning = RotatingFileHandler('warnings.log', maxBytes=100000, backupCount=2)
 handlerwarning.setFormatter(formatter)
 handlerwarning.setLevel(logging.WARNING)
 
@@ -350,6 +351,9 @@ def NFCReadAccess():
             time.sleep(1)
             pass
 
+def lockStatus():
+    pass
+
 def buzzerBeep():
     #HIGH odgovara jedinci i zvuku a LOW nuli i tisini
     GPIO.output(buzzer,GPIO.HIGH)
@@ -401,6 +405,10 @@ def main():
                 #unosom pina potvrdjujemo pokusaj pristupa vratima
                 print("Unesen tocan PIN")
                 NFCReadAccess()
+                pass
+            elif unos == 3:
+                print("Provjera stanja brave")
+                lockStatus()
                 pass
             else:
                 #u slucaju pogresnog unosa logirati pokusaj i slati upozorenje
