@@ -474,8 +474,7 @@ def resetFunction():
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
         display.lcd_clear()
-        display.lcd_display_string("Nemate ovlasti", 1)
-        display.lcd_display_string("Za ovu funkciju", 2)
+        display.lcd_display_string("Netocan PIN!", 1)
         time.sleep(2)
         pass
     pass
