@@ -44,7 +44,7 @@ except:
     print("postoji")
     pass
 try:
-    mycursor.execute("CREATE TABLE Logs (logId int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logMsg VARCHAR(150))")
+    mycursor.execute("CREATE TABLE Logs (logId int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logType VARCHAR(10) NOT NULL logMsg VARCHAR(150) NOT NULL)")
     pass
 except:
     print("postoji")
@@ -402,6 +402,7 @@ def main():
 
         while True:
             print("Vrti se pocetni ekran")
+            mycursor.execute("DELETE FROM Logs WHERE")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
             logger.debug('Program je na pocetnom ekranu')
