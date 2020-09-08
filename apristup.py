@@ -42,6 +42,13 @@ try:
     pass
 except:
     print("postoji")
+    pass
+try:
+    mycursor.execute("CREATE TABLE Logs (logId int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logMsg VARCHAR(150))")
+    pass
+except:
+    print("postoji")
+    pass
     
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
