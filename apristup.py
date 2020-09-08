@@ -375,51 +375,111 @@ def NFCReadAccess():
             pass
 
 def resetFunction():
-    mycursor.execute("TRUNCATE TABLE Users")
-    mycursor.execute("TRUNCATE TABLE Devices")
-    db.commit()
-    logger.debug("Reset tablica")
+    display.lcd_clear()
+    display.lcd_display_string("Potvrditi akciju", 1)
+    display.lcd_display_string("PIN-om!", 2)
 
-    try:
-        mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
-        db.commit()
-        lastrow = mycursor.lastrowid
-        with ExpectTimeout(10, print_traceback=False):
-            try:
-                deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
-                deviceID = str(deviceID)
-                print(deviceID)
-                print("Uspjesno citanje!")
-                buzzerBeep()
+    unos = input("Unesi pin: ")
 
-                mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
-                db.commit()
-                logger.info('Adminu dodijeljen novi uredjaj')
-                now = datetime.now()
-                now = now.strftime('%Y-%m-%d %H:%M:%S')      
-                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Adminu dodijeljen uredjaj'))
-                pass
-            except:
-                #isteklo vrijeme
-                print("Neuspjesno citanje")
-                logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
-                now = datetime.now()
-                now = now.strftime('%Y-%m-%d %H:%M:%S')      
-                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesno dodavanje novog uredjaja adminu'))
-                display.lcd_clear()
-                display.lcd_display_string("Neuspjesno", 1)
-                display.lcd_display_string("Citanje!", 2)
-                buzzerBeep()
-                time.sleep(1)
-                pass
-    except:
-        print("Ne valja")
+    if unos == 1234:
+
         display.lcd_clear()
-        display.lcd_display_string("Povratak na", 1)
-        display.lcd_display_string("pocetni ekran", 2)
-        time.sleep(1)
+        display.lcd_display_string("Prislonite NFC", 1)
+        display.lcd_display_string("uredjaj!", 2)
+        UserID = ''
+
+        try:
+            UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            UserID = str(UserID)
+            print(UserID)
+            print("Uspjesno citanje!")
+            buzzerBeep()
+
+            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
+            usid_int = mycursor.fetchone()
+            usid_int = int(''.join(map(str, usid_int)))
+            print(usid_int)
+            mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
+            secLevel = mycursor.fetchone()
+            secLevel = int(''.join(map(str, secLevel)))
+
+            if secLevel == 2 :
+                print("Prelazak na dodavanje")
+                logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Uspjesna provjera sigurnosnih ovlasti za dodavanje novog korisnika'))
+
+                mycursor.execute("TRUNCATE TABLE Users")
+                mycursor.execute("TRUNCATE TABLE Devices")
+                db.commit()
+                logger.debug("Reset tablica")
+
+                try:
+                    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
+                    db.commit()
+                    lastrow = mycursor.lastrowid
+                    with ExpectTimeout(10, print_traceback=False):
+                        try:
+                            deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                            deviceID = str(deviceID)
+                            print(deviceID)
+                            print("Uspjesno citanje!")
+                            buzzerBeep()
+
+                            mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
+                            db.commit()
+                            logger.info('Adminu dodijeljen novi uredjaj')
+                            now = datetime.now()
+                            now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodijeljen novi admin'))
+                            pass
+                        except:
+                            #isteklo vrijeme
+                            print("Neuspjesno citanje")
+                            logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
+                            now = datetime.now()
+                            now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesno dodavanje novog admina'))
+                            display.lcd_clear()
+                            display.lcd_display_string("Neuspjesno", 1)
+                            display.lcd_display_string("Citanje!", 2)
+                            buzzerBeep()
+                            time.sleep(1)
+                            pass
+                    pass
+                except:
+                    print("Neuspjesno dodavanje admina")
+                    pass      
+            else:
+                logger.warning('Neovlasten pokusaj reseta sustava!')
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
+                display.lcd_clear()
+                display.lcd_display_string("Nemate ovlasti", 1)
+                display.lcd_display_string("Za ovu funkciju", 2)
+                time.sleep(2)
+                pass
+        except:
+            print("Ne valja")
+            display.lcd_clear()
+            display.lcd_display_string("Neuspjesno", 1)
+            display.lcd_display_string("Citanje!", 2)
+            time.sleep(1)
+            pass
+    else:
+        logger.warning('Neovlasten pokusaj reseta sustava!')
+        now = datetime.now()
+        now = now.strftime('%Y-%m-%d %H:%M:%S')      
+        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
+        display.lcd_clear()
+        display.lcd_display_string("Nemate ovlasti", 1)
+        display.lcd_display_string("Za ovu funkciju", 2)
+        time.sleep(2)
         pass
     pass
+pass
 
 def lockStatus():
     logger.info('Provjera stanja brave')
