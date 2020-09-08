@@ -378,6 +378,7 @@ def resetFunction():
     mycursor.execute("TRUNCATE TABLE Users")
     mycursor.execute("TRUNCATE TABLE Devices")
     db.commit()
+    logger.debug("Reset tablica")
 
     try:
         mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
@@ -393,12 +394,18 @@ def resetFunction():
 
                 mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
                 db.commit()
-                logger.info('Korisniku dodijeljen novi uredjaj')
+                logger.info('Adminu dodijeljen novi uredjaj')
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Adminu dodijeljen uredjaj'))
                 pass
             except:
                 #isteklo vrijeme
                 print("Neuspjesno citanje")
-                logger.warning('Neuspjesno dodavanja novog uredjaja')
+                logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesno dodavanje novog uredjaja adminu'))
                 display.lcd_clear()
                 display.lcd_display_string("Neuspjesno", 1)
                 display.lcd_display_string("Citanje!", 2)
@@ -415,6 +422,10 @@ def resetFunction():
     pass
 
 def lockStatus():
+    logger.info('Provjera stanja brave')
+    now = datetime.now()
+    now = now.strftime('%Y-%m-%d %H:%M:%S')      
+    mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Prvojera stanja brave'))
     if GPIO.input(relay):
         print("Relej u HIGH")
         display.lcd_clear()
