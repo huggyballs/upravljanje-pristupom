@@ -1,8 +1,5 @@
 #glavni program
 
-#zadaci za dodati:
-#slanje maila za upozorenja
-
 import lcddriver
 import RPi.GPIO as GPIO
 import nfc
@@ -18,6 +15,9 @@ import tty
 import logging
 from logging.handlers import RotatingFileHandler
 import traceback
+
+import smtplib
+import ssl
 
 db = mysql.connector.connect(
     host="localhost",
@@ -79,6 +79,21 @@ buzzer = 5
 relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
+
+port = 587
+smtp_server = "smtp.gmail.com"
+sender_email = "upravljanjepristupom@gmail.com"
+receiver_email = "mraic00@fesb.hr"
+password = "emovis123"
+mg1 = """\
+Subject: Upozorenje!
+
+Sustav je zabiljezio neovlasten pokusaj pristupa!"""
+mg2 = """\
+Subject: Upozorenje!
+
+Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
+context = ssl.create_default_context()
 
 try:
     # Should be defined in Python 3
@@ -310,6 +325,10 @@ def NFCAddCheck():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg2)
             display.lcd_display_string("Nemate ovlasti", 1)
             display.lcd_display_string("Za akciju!", 2)
             time.sleep(1)
@@ -321,6 +340,10 @@ def NFCAddCheck():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, mg2)
         display.lcd_clear()
         display.lcd_display_string("Neuspjesno", 1)
         display.lcd_display_string("Citanje!", 2)
@@ -366,6 +389,10 @@ def NFCReadAccess():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg1)
 
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
@@ -456,6 +483,10 @@ def resetFunction():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
+                with smtplib.SMTP(smtp_server, port) as server:
+                    server.starttls(context=context)
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, mg2)
                 display.lcd_clear()
                 display.lcd_display_string("Nemate ovlasti", 1)
                 display.lcd_display_string("Za ovu funkciju", 2)
@@ -463,6 +494,14 @@ def resetFunction():
                 pass
         except:
             print("Ne valja")
+            logger.warning('Neovlasten pokusaj reseta sustava!')
+            now = datetime.now()
+            now = now.strftime('%Y-%m-%d %H:%M:%S')      
+            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg2)
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
@@ -473,6 +512,10 @@ def resetFunction():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, mg2)
         display.lcd_clear()
         display.lcd_display_string("Netocan PIN!", 1)
         time.sleep(2)
@@ -564,6 +607,11 @@ def main():
                 print("Netocan unos")
                 display.lcd_clear()
                 display.lcd_display_string("Netocan unos!", 1)
+                logger.warning('Netocan unos na tipkovnici!')
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
+
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
