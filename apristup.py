@@ -447,34 +447,32 @@ def resetFunction():
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
                     db.commit()
                     lastrow = mycursor.lastrowid
-                    with ExpectTimeout(10, print_traceback=False):
-                        try:
-                            deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
-                            deviceID = str(deviceID)
-                            print(deviceID)
-                            print("Uspjesno citanje!")
-                            buzzerBeep()
+                    try:
+                        deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                        deviceID = str(deviceID)
+                        print(deviceID)
+                        print("Uspjesno citanje!")
+                        buzzerBeep()
 
-                            mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
-                            db.commit()
-                            logger.info('Adminu dodijeljen novi uredjaj')
-                            now = datetime.now()
-                            now = now.strftime('%Y-%m-%d %H:%M:%S')      
-                            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodijeljen novi admin'))
-                            pass
-                        except:
-                            #isteklo vrijeme
-                            print("Neuspjesno citanje")
-                            logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
-                            now = datetime.now()
-                            now = now.strftime('%Y-%m-%d %H:%M:%S')      
-                            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesno dodavanje novog admina'))
-                            display.lcd_clear()
-                            display.lcd_display_string("Neuspjesno", 1)
-                            display.lcd_display_string("Citanje!", 2)
-                            buzzerBeep()
-                            time.sleep(1)
-                            pass
+                        mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
+                        db.commit()
+                        logger.info('Adminu dodijeljen novi uredjaj')
+                        now = datetime.now()
+                        now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodijeljen novi admin'))
+                        pass
+                    except:
+                        print("Neuspjesno citanje")
+                        logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
+                        now = datetime.now()
+                        now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesno dodavanje novog admina'))
+                        display.lcd_clear()
+                        display.lcd_display_string("Neuspjesno", 1)
+                        display.lcd_display_string("Citanje!", 2)
+                        buzzerBeep()
+                        time.sleep(1)
+                        pass
                     pass
                 except:
                     print("Neuspjesno dodavanje admina")
