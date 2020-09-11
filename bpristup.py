@@ -44,7 +44,7 @@ except:
     print("postoji")
     pass
 try:
-    mycursor.execute("CREATE TABLE Logs (logId int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logType VARCHAR(10) NOT NULL logMsg VARCHAR(150) NOT NULL)")
+    mycursor.execute("CREATE TABLE Logs (LogNum int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logType VARCHAR(10) NOT NULL, logMsg VARCHAR(100) NOT NULL)")
     db.commit()
     pass
 except:
