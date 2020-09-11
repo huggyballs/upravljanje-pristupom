@@ -96,27 +96,6 @@ Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
 context = ssl.create_default_context()
 
 try:
-    mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
-    db.commit()
-    lastrow = mycursor.lastrowid
-    try:
-        deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
-        deviceID = str(deviceID)
-        print(deviceID)
-        print("Uspjesno citanje!")
-        buzzerBeep()
-
-        mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
-        db.commit()
-        pass
-    except:
-        print("Neuspjesno citanje")
-        pass
-except:
-    print("Neuspjesno dodavanje admina")
-    pass
-
-try:
     # Should be defined in Python 3
     x = TimeoutError
 except:
