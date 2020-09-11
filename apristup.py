@@ -260,7 +260,7 @@ def UserAdd():
                         display.lcd_clear()
                         display.lcd_display_string("Neuspjesno", 1)
                         display.lcd_display_string("Citanje!", 2)
-                        buzzerBeep()
+                        buzzerBeepAlarm()
                         time.sleep(1)
                         i = i - 1
                         pass
@@ -331,6 +331,7 @@ def NFCAddCheck():
                 server.sendmail(sender_email, receiver_email, mg2)
             display.lcd_display_string("Nemate ovlasti", 1)
             display.lcd_display_string("Za akciju!", 2)
+            buzzerBeepAlarm()
             time.sleep(1)
             pass
         pass
@@ -347,7 +348,7 @@ def NFCAddCheck():
         display.lcd_clear()
         display.lcd_display_string("Neuspjesno", 1)
         display.lcd_display_string("Citanje!", 2)
-        buzzerBeep()
+        buzzerBeepAlarm()
         time.sleep(1)
         pass
 
@@ -397,7 +398,7 @@ def NFCReadAccess():
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
-            buzzerBeep()
+            buzzerBeepAlarm()
             time.sleep(1)
             pass
 
@@ -490,6 +491,7 @@ def resetFunction():
                 display.lcd_clear()
                 display.lcd_display_string("Nemate ovlasti", 1)
                 display.lcd_display_string("Za ovu funkciju", 2)
+                buzzerBeepAlarm()
                 time.sleep(2)
                 pass
         except:
@@ -505,6 +507,7 @@ def resetFunction():
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
+            buzzerBeepAlarm()
             time.sleep(1)
             pass
     else:
@@ -518,6 +521,7 @@ def resetFunction():
             server.sendmail(sender_email, receiver_email, mg2)
         display.lcd_clear()
         display.lcd_display_string("Netocan PIN!", 1)
+        buzzerBeepAlarm()
         time.sleep(2)
         pass
     pass
@@ -549,6 +553,18 @@ def buzzerBeep():
     GPIO.output(buzzer,GPIO.LOW)
     print("KRAJ BIIIIP")
     time.sleep(0.5)
+    pass
+
+def buzzerBeepAlarm():
+    i = 0
+    while i < 6:
+        GPIO.output(buzzer,GPIO.HIGH)
+        print("BIIIIP")
+        time.sleep(0.3)
+        GPIO.output(buzzer,GPIO.LOW)
+        print("KRAJ BIIIIP")
+        time.sleep(0.1)
+        i = i + 1
     pass
 
 def relayOpen():
