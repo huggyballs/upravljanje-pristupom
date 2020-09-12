@@ -656,9 +656,9 @@ def main():
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
                 context = ssl.create_default_context()
                 with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls(context=context)
-                server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, mg1)
+                    server.starttls(context=context)
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, mg1)
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
