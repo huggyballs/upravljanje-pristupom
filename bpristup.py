@@ -345,10 +345,10 @@ def NFCAddCheck():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
-            context = ssl.create_default_context()
+            contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
-                server.starttls(context=context)
+                server.starttls(context=contexti)
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -367,10 +367,10 @@ def NFCAddCheck():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
-        context = ssl.create_default_context()
+        contexti = ssl.create_default_context()
         try:
             server = smtplib.SMTP(smtp_server, port)
-            server.starttls(context=context)
+            server.starttls(context=contexti)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
         except Exception as e:
@@ -422,10 +422,10 @@ def NFCReadAccess():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
-            context = ssl.create_default_context()
+            contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
-                server.starttls(context=context)
+                server.starttls(context=contexti)
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -519,10 +519,10 @@ def resetFunction():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-                context = ssl.create_default_context()
+                contexti = ssl.create_default_context()
                 try:
                     server = smtplib.SMTP(smtp_server, port)
-                    server.starttls(context=context)
+                    server.starttls(context=contexti)
                     server.login(sender_email, password)
                     server.sendmail(sender_email, receiver_email, mg1)
                 except Exception as e:
@@ -541,10 +541,10 @@ def resetFunction():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-            context = ssl.create_default_context()
+            contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
-                server.starttls(context=context)
+                server.starttls(context=contexti)
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -562,10 +562,10 @@ def resetFunction():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-        context = ssl.create_default_context()
+        contexti = ssl.create_default_context()
         try:
             server = smtplib.SMTP(smtp_server, port)
-            server.starttls(context=context)
+            server.starttls(context=contexti)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
         except Exception as e:
