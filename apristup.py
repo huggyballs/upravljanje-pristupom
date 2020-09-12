@@ -589,10 +589,15 @@ def main():
 
             #ovo ispod samo za provjeru pravilnog rada baze. Poslije ukloniti
             mycursor.execute("SELECT * FROM Users")
+            db.commit()
             for x in mycursor:
                 print(x)
-            
             mycursor.execute("SELECT * FROM Devices")
+            db.commit()
+            for x in mycursor:
+                print(x)
+            mycursor.execute("SELECT * FROM Logs")
+            db.commit()
             for x in mycursor:
                 print(x)
 
@@ -620,11 +625,11 @@ def main():
                 print("Netocan unos")
                 display.lcd_clear()
                 display.lcd_display_string("Netocan unos!", 1)
+                time.sleep(2)
                 logger.warning('Netocan unos na tipkovnici!')
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
-
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
