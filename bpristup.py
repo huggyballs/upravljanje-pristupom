@@ -348,6 +348,8 @@ def NFCAddCheck():
             contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
+                server.connect(smtp_server, port)
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -369,6 +371,8 @@ def NFCAddCheck():
         contexti = ssl.create_default_context()
         try:
             server = smtplib.SMTP(smtp_server, port)
+            server.connect(smtp_server, port)
+            server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
         except Exception as e:
@@ -423,6 +427,8 @@ def NFCReadAccess():
             contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
+                server.connect(smtp_server, port)
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -519,6 +525,8 @@ def resetFunction():
                 contexti = ssl.create_default_context()
                 try:
                     server = smtplib.SMTP(smtp_server, port)
+                    server.connect(smtp_server, port)
+                    server.starttls()
                     server.login(sender_email, password)
                     server.sendmail(sender_email, receiver_email, mg1)
                 except Exception as e:
@@ -540,6 +548,8 @@ def resetFunction():
             contexti = ssl.create_default_context()
             try:
                 server = smtplib.SMTP(smtp_server, port)
+                server.connect(smtp_server, port)
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
             except Exception as e:
@@ -560,6 +570,8 @@ def resetFunction():
         contexti = ssl.create_default_context()
         try:
             server = smtplib.SMTP(smtp_server, port)
+            server.connect(smtp_server, port)
+            server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
         except Exception as e:
@@ -680,6 +692,8 @@ def main():
                 context = ssl.create_default_context()
                 try:
                     server = smtplib.SMTP(smtp_server, port)
+                    server.connect(smtp_server, port)
+                    server.starttls()
                     server.login(sender_email, password)
                     server.sendmail(sender_email, receiver_email, mg1)
                 except Exception as e:
