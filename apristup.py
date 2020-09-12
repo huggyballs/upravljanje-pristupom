@@ -93,7 +93,6 @@ mg2 = """\
 Subject: Upozorenje!
 
 Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
-context = ssl.create_default_context()
 
 try:
     # Should be defined in Python 3
@@ -325,10 +324,16 @@ def NFCAddCheck():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls(context=context)
+            try:
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg2)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
             display.lcd_display_string("Nemate ovlasti", 1)
             display.lcd_display_string("Za akciju!", 2)
             buzzerBeepAlarm()
@@ -341,10 +346,16 @@ def NFCAddCheck():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
-        with smtplib.SMTP(smtp_server, port) as server:
-            server.starttls(context=context)
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', port)
+            server.ehlo()
+            server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg2)
+        except Exception as e:
+            print(e)
+        finally:
+            server.quit()
         display.lcd_clear()
         display.lcd_display_string("Neuspjesno", 1)
         display.lcd_display_string("Citanje!", 2)
@@ -390,10 +401,16 @@ def NFCReadAccess():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls(context=context)
+            try:
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
 
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
@@ -481,10 +498,16 @@ def resetFunction():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-                with smtplib.SMTP(smtp_server, port) as server:
-                    server.starttls(context=context)
+                try:
+                    server = smtplib.SMTP('smtp.gmail.com', port)
+                    server.ehlo()
+                    server.starttls()
                     server.login(sender_email, password)
                     server.sendmail(sender_email, receiver_email, mg2)
+                except Exception as e:
+                    print(e)
+                finally:
+                    server.quit()
                 display.lcd_clear()
                 display.lcd_display_string("Nemate ovlasti", 1)
                 display.lcd_display_string("Za ovu funkciju", 2)
@@ -497,10 +520,16 @@ def resetFunction():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls(context=context)
+            try:
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
+                server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg2)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
@@ -512,10 +541,17 @@ def resetFunction():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-        with smtplib.SMTP(smtp_server, port) as server:
-            server.starttls(context=context)
+        server = smtplib.SMTP('smtp.gmail.com', port)
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', port)
+            server.ehlo()
+            server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg2)
+        except Exception as e:
+            print(e)
+        finally:
+            server.quit()
         display.lcd_clear()
         display.lcd_display_string("Netocan PIN!", 1)
         buzzerBeepAlarm()
@@ -627,6 +663,17 @@ def main():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                try:
+                    server = smtplib.SMTP('smtp.gmail.com', port)
+                    server.ehlo()
+                    server.starttls()
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, mg1)
+                except Exception as e:
+                    print(e)
+                finally:
+                    server.quit()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
