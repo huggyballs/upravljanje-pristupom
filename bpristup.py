@@ -610,15 +610,12 @@ def main():
 
             #ovo ispod samo za provjeru pravilnog rada baze. Poslije ukloniti
             mycursor.execute("SELECT * FROM Users")
-            db.commit()
             for x in mycursor:
                 print(x)
             mycursor.execute("SELECT * FROM Devices")
-            db.commit()
             for x in mycursor:
                 print(x)
             mycursor.execute("SELECT * FROM Logs")
-            db.commit()
             for x in mycursor:
                 print(x)
 
