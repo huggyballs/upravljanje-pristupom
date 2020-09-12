@@ -568,13 +568,15 @@ def lockStatus():
     if GPIO.input(relay):
         print("Relej u HIGH")
         display.lcd_clear()
-        display.lcd_display_string("Brava je otkljucana!", 1)
+        display.lcd_display_string("Brava je", 1)
+        display.lcd_display_string("otkljucana!", 2)
         time.sleep(3)
         pass
     else:
         print("Relej u LOW")
         display.lcd_clear()
-        display.lcd_display_string("Brava je zakljucana!", 1)
+        display.lcd_display_string("Brava je!", 1)
+        display.lcd_display_string("zakljucana!", 2)
         time.sleep(3)
         pass
 
