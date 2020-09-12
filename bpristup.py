@@ -345,13 +345,13 @@ def NFCAddCheck():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
-            contexti = ssl.create_default_context()
+            server = smtplib.SMTP('smtp.gmail.com', port)
             try:
-                server = smtplib.SMTP(smtp_server, port)
-                server.connect(smtp_server, port)
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
                 server.starttls()
                 server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, mg1)
+                server.sendmail(sender_email, receiver_email, mg2)
             except Exception as e:
                 print(e)
             finally:
@@ -368,13 +368,13 @@ def NFCAddCheck():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
-        contexti = ssl.create_default_context()
+        server = smtplib.SMTP('smtp.gmail.com', port)
         try:
-            server = smtplib.SMTP(smtp_server, port)
-            server.connect(smtp_server, port)
+            server = smtplib.SMTP('smtp.gmail.com', port)
+            server.ehlo()
             server.starttls()
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, mg1)
+            server.sendmail(sender_email, receiver_email, mg2)
         except Exception as e:
             print(e)
         finally:
@@ -424,10 +424,10 @@ def NFCReadAccess():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
-            contexti = ssl.create_default_context()
+            server = smtplib.SMTP('smtp.gmail.com', port)
             try:
-                server = smtplib.SMTP(smtp_server, port)
-                server.connect(smtp_server, port)
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
                 server.starttls()
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
@@ -522,13 +522,13 @@ def resetFunction():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-                contexti = ssl.create_default_context()
+                server = smtplib.SMTP('smtp.gmail.com', port)
                 try:
-                    server = smtplib.SMTP(smtp_server, port)
-                    server.connect(smtp_server, port)
+                    server = smtplib.SMTP('smtp.gmail.com', port)
+                    server.ehlo()
                     server.starttls()
                     server.login(sender_email, password)
-                    server.sendmail(sender_email, receiver_email, mg1)
+                    server.sendmail(sender_email, receiver_email, mg2)
                 except Exception as e:
                     print(e)
                 finally:
@@ -545,13 +545,13 @@ def resetFunction():
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-            contexti = ssl.create_default_context()
+            server = smtplib.SMTP('smtp.gmail.com', port)
             try:
-                server = smtplib.SMTP(smtp_server, port)
-                server.connect(smtp_server, port)
+                server = smtplib.SMTP('smtp.gmail.com', port)
+                server.ehlo()
                 server.starttls()
                 server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, mg1)
+                server.sendmail(sender_email, receiver_email, mg2)
             except Exception as e:
                 print(e)
             finally:
@@ -567,13 +567,13 @@ def resetFunction():
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
-        contexti = ssl.create_default_context()
+        server = smtplib.SMTP('smtp.gmail.com', port)
         try:
-            server = smtplib.SMTP(smtp_server, port)
-            server.connect(smtp_server, port)
+            server = smtplib.SMTP('smtp.gmail.com', port)
+            server.ehlo()
             server.starttls()
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, mg1)
+            server.sendmail(sender_email, receiver_email, mg2)
         except Exception as e:
             print(e)
         finally:
@@ -689,10 +689,10 @@ def main():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
-                context = ssl.create_default_context()
+                server = smtplib.SMTP('smtp.gmail.com', port)
                 try:
-                    server = smtplib.SMTP(smtp_server, port)
-                    server.connect(smtp_server, port)
+                    server = smtplib.SMTP('smtp.gmail.com', port)
+                    server.ehlo()
                     server.starttls()
                     server.login(sender_email, password)
                     server.sendmail(sender_email, receiver_email, mg1)
