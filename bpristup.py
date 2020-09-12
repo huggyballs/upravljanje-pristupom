@@ -80,7 +80,7 @@ relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
 
-port = 465
+port = 587
 smtp_server = "smtp.gmail.com"
 sender_email = "upravljanjepristupom@gmail.com"
 receiver_email = "mraic00@fesb.hr"
@@ -346,10 +346,15 @@ def NFCAddCheck():
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
             context = ssl.create_default_context()
-            server = smtplib.SMTP_SSL(smtp_server, port, context)
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, mg1)
-            server.quit()
+            try:
+                server = smtplib.SMTP(smtp_server, port)
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg1)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
             display.lcd_display_string("Nemate ovlasti", 1)
             display.lcd_display_string("Za akciju!", 2)
             buzzerBeepAlarm()
@@ -363,10 +368,15 @@ def NFCAddCheck():
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
         context = ssl.create_default_context()
-        server = smtplib.SMTP_SSL(smtp_server, port, context)
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, mg1)
-        server.quit()
+        try:
+            server = smtplib.SMTP(smtp_server, port)
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, mg1)
+        except Exception as e:
+            print(e)
+        finally:
+            server.quit()
         display.lcd_clear()
         display.lcd_display_string("Neuspjesno", 1)
         display.lcd_display_string("Citanje!", 2)
@@ -413,10 +423,15 @@ def NFCReadAccess():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
             context = ssl.create_default_context()
-            server = smtplib.SMTP_SSL(smtp_server, port, context)
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, mg1)
-            server.quit()
+            try:
+                server = smtplib.SMTP(smtp_server, port)
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg1)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
 
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
@@ -505,10 +520,15 @@ def resetFunction():
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
                 context = ssl.create_default_context()
-                server = smtplib.SMTP_SSL(smtp_server, port, context)
-                server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, mg1)
-                server.quit()
+                try:
+                    server = smtplib.SMTP(smtp_server, port)
+                    server.starttls(context=context)
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, mg1)
+                except Exception as e:
+                    print(e)
+                finally:
+                    server.quit()
                 display.lcd_clear()
                 display.lcd_display_string("Nemate ovlasti", 1)
                 display.lcd_display_string("Za ovu funkciju", 2)
@@ -522,10 +542,15 @@ def resetFunction():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
             context = ssl.create_default_context()
-            server = smtplib.SMTP_SSL(smtp_server, port, context)
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, mg1)
-            server.quit()
+            try:
+                server = smtplib.SMTP(smtp_server, port)
+                server.starttls(context=context)
+                server.login(sender_email, password)
+                server.sendmail(sender_email, receiver_email, mg1)
+            except Exception as e:
+                print(e)
+            finally:
+                server.quit()
             display.lcd_clear()
             display.lcd_display_string("Neuspjesno", 1)
             display.lcd_display_string("Citanje!", 2)
@@ -538,10 +563,15 @@ def resetFunction():
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
         context = ssl.create_default_context()
-        server = smtplib.SMTP_SSL(smtp_server, port, context)
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, mg1)
-        server.quit()
+        try:
+            server = smtplib.SMTP(smtp_server, port)
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, mg1)
+        except Exception as e:
+            print(e)
+        finally:
+            server.quit()
         display.lcd_clear()
         display.lcd_display_string("Netocan PIN!", 1)
         buzzerBeepAlarm()
@@ -654,10 +684,15 @@ def main():
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
                 context = ssl.create_default_context()
-                server = smtplib.SMTP_SSL(smtp_server, port, context)
-                server.login(sender_email, password)
-                server.sendmail(sender_email, receiver_email, mg1)
-                server.quit()
+                try:
+                    server = smtplib.SMTP(smtp_server, port)
+                    server.starttls(context=context)
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, mg1)
+                except Exception as e:
+                    print(e)
+                finally:
+                    server.quit()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
