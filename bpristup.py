@@ -80,7 +80,7 @@ relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
 
-port = 587
+port = 465
 smtp_server = "smtp.gmail.com"
 sender_email = "upravljanjepristupom@gmail.com"
 receiver_email = "mraic00@fesb.hr"
@@ -346,7 +346,7 @@ def NFCAddCheck():
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Korisnik neovlasteno pokusao dodati nove korisnike'))
             display.lcd_clear()
             context = ssl.create_default_context()
-            server = smtplib.SMTP(smtp_server, port, context)
+            server = smtplib.SMTP_SSL(smtp_server, port, context)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
             server.quit()
@@ -363,7 +363,7 @@ def NFCAddCheck():
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesna provjera ovlasti'))
         context = ssl.create_default_context()
-        server = smtplib.SMTP(smtp_server, port, context)
+        server = smtplib.SMTP_SSL(smtp_server, port, context)
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, mg1)
         server.quit()
@@ -413,7 +413,7 @@ def NFCReadAccess():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neuspjesan pokusaj ulaska'))
             context = ssl.create_default_context()
-            server = smtplib.SMTP(smtp_server, port, context)
+            server = smtplib.SMTP_SSL(smtp_server, port, context)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
             server.quit()
@@ -505,7 +505,7 @@ def resetFunction():
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
                 context = ssl.create_default_context()
-                server = smtplib.SMTP(smtp_server, port, context)
+                server = smtplib.SMTP_SSL(smtp_server, port, context)
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
                 server.quit()
@@ -522,7 +522,7 @@ def resetFunction():
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
             mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
             context = ssl.create_default_context()
-            server = smtplib.SMTP(smtp_server, port, context)
+            server = smtplib.SMTP_SSL(smtp_server, port, context)
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, mg1)
             server.quit()
@@ -538,7 +538,7 @@ def resetFunction():
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta sustava!'))
         context = ssl.create_default_context()
-        server = smtplib.SMTP(smtp_server, port, context)
+        server = smtplib.SMTP_SSL(smtp_server, port, context)
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, mg1)
         server.quit()
@@ -654,7 +654,7 @@ def main():
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
                 context = ssl.create_default_context()
-                server = smtplib.SMTP(smtp_server, port, context)
+                server = smtplib.SMTP_SSL(smtp_server, port, context)
                 server.login(sender_email, password)
                 server.sendmail(sender_email, receiver_email, mg1)
                 server.quit()
