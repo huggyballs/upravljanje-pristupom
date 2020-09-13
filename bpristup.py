@@ -689,17 +689,6 @@ def main():
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
-                server = smtplib.SMTP('smtp.gmail.com', port)
-                try:
-                    server = smtplib.SMTP('smtp.gmail.com', port)
-                    server.ehlo()
-                    server.starttls()
-                    server.login(sender_email, password)
-                    server.sendmail(sender_email, receiver_email, mg1)
-                except Exception as e:
-                    print(e)
-                finally:
-                    server.quit()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("Kraj rada programa")
