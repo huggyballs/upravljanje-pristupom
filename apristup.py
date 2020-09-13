@@ -496,6 +496,81 @@ def resetFunction():
     pass
 pass
 
+def resetLogs():
+    display.lcd_clear()
+    display.lcd_display_string("Potvrditi akciju", 1)
+    display.lcd_display_string("PIN-om!", 2)
+
+    unos = input("Unesi pin: ")
+
+    if unos == 1234:
+
+        display.lcd_clear()
+        display.lcd_display_string("Prislonite NFC", 1)
+        display.lcd_display_string("uredjaj!", 2)
+        UserID = ''
+
+        try:
+            UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+            UserID = str(UserID)
+            print(UserID)
+            print("Uspjesno citanje!")
+            buzzerBeep()
+
+            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
+            usid_int = mycursor.fetchone()
+            usid_int = int(''.join(map(str, usid_int)))
+            print(usid_int)
+            mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
+            secLevel = mycursor.fetchone()
+            secLevel = int(''.join(map(str, secLevel)))
+
+            if secLevel == 2 :
+                print("Prelazak na dodavanje")
+                logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
+
+                mycursor.execute("TRUNCATE TABLE Logs")
+                print("Izbrisani logovi")
+                logger.debug("Reset logova")      
+            else:
+                logger.warning('Neovlasten pokusaj reseta logova!')
+                now = datetime.now()
+                now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
+                sendEmail(2)
+                display.lcd_clear()
+                display.lcd_display_string("Nemate ovlasti", 1)
+                display.lcd_display_string("Za ovu funkciju", 2)
+                buzzerBeepAlarm()
+                time.sleep(2)
+                pass
+        except:
+            print("Ne valja")
+            logger.warning('Neovlasten pokusaj reseta logova!')
+            now = datetime.now()
+            now = now.strftime('%Y-%m-%d %H:%M:%S')      
+            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
+            sendEmail(2)
+            display.lcd_clear()
+            display.lcd_display_string("Neuspjesno", 1)
+            display.lcd_display_string("Citanje!", 2)
+            buzzerBeepAlarm()
+            time.sleep(1)
+            pass
+    else:
+        logger.warning('Neovlasten pokusaj reseta logova!')
+        now = datetime.now()
+        now = now.strftime('%Y-%m-%d %H:%M:%S')      
+        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
+        sendEmail(2)
+        display.lcd_clear()
+        display.lcd_display_string("Netocan PIN!", 1)
+        buzzerBeepAlarm()
+        time.sleep(2)
+        pass
+    pass
+pass
+
 def sendEmail(msg):
     server = smtplib.SMTP('smtp.gmail.com', port)
     try:
@@ -515,7 +590,7 @@ def lockStatus():
     logger.info('Provjera stanja brave')
     now = datetime.now()
     now = now.strftime('%Y-%m-%d %H:%M:%S')      
-    mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Prvojera stanja brave'))
+    mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Provjera stanja brave'))
     if GPIO.input(relay):
         print("Relej u HIGH")
         display.lcd_clear()
@@ -605,6 +680,10 @@ def main():
             elif unos == 7:
                 print("Resetiranje cijele tablice")
                 resetFunction()
+                pass
+            elif unos == 9:
+                print("Resetiranje logova")
+                resetLogs()
                 pass
             else:
                 #u slucaju pogresnog unosa logirati pokusaj i slati upozorenje
