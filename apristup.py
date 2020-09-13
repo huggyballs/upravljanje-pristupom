@@ -23,14 +23,14 @@ db = mysql.connector.connect(
     host="localhost",
     user="emovis",
     passwd="emovis",
-    database="kontrolapristupa"
+    database="kontrolapristupa",
+    autocommit=True
     )
 mycursor = db.cursor()
 
 try:
     #kod za dodavanje tablice s korisnicima
     mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL, role VARCHAR(10) NOT NULL)")
-    db.commit()
     pass
 except:
     print("postoji")
@@ -38,14 +38,12 @@ except:
     #tablica postoji pa se ide dalje
 try:
     mycursor.execute("CREATE TABLE Devices (DeviceNum int PRIMARY KEY NOT NULL AUTO_INCREMENT, UserId int NOT NULL, DeviceId VARCHAR(40) NOT NULL)")
-    db.commit()
     pass
 except:
     print("postoji")
     pass
 try:
     mycursor.execute("CREATE TABLE Logs (LogNum int PRIMARY KEY NOT NULL AUTO_INCREMENT, dt DATETIME NOT NULL, logType VARCHAR(15) NOT NULL, logMsg VARCHAR(100) NOT NULL)")
-    db.commit()
     pass
 except:
     print("postoji")
@@ -191,27 +189,25 @@ def UserAdd():
                     logger.debug('Potvrdjena sigurnosna razina 1')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
-                    db.commit()
                     logger.info('Dodan novi korisnik')
                     now = datetime.now()
                     now = now.strftime('%Y-%m-%d %H:%M:%S')      
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
-                    return False
+                    break
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
                     logger.debug('potvrdjena sigurnosna razina 2')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
-                    db.commit()
                     logger.info('Dodan novi korisnik')
                     now = datetime.now()
                     now = now.strftime('%Y-%m-%d %H:%M:%S')      
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
-                    return False
+                    break
                 else:
                     #Neispravan unos!
                     print("Neispravan unos!")
@@ -243,7 +239,6 @@ def UserAdd():
                         buzzerBeep()
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (last_id, deviceID))
-                        db.commit()
                         logger.info('Korisniku dodijeljen novi uredjaj')
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -430,13 +425,11 @@ def resetFunction():
 
                 mycursor.execute("TRUNCATE TABLE Users")
                 mycursor.execute("TRUNCATE TABLE Devices")
-                db.commit()
                 print("Izbrisane tablice")
                 logger.debug("Reset tablica")
 
                 try:
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
-                    db.commit()
                     lastrow = mycursor.lastrowid
                     lastrow = int(lastrow)
                     try:
@@ -447,7 +440,6 @@ def resetFunction():
                         buzzerBeep()
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
-                        db.commit()
                         logger.info('Adminu dodijeljen novi uredjaj')
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
