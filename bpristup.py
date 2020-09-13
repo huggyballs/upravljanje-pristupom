@@ -6,12 +6,9 @@ import nfc
 
 import time
 from datetime import datetime
-import thread
 
-import os
 import sys
 import mysql.connector
-import tty
 import logging
 from logging.handlers import RotatingFileHandler
 import traceback
