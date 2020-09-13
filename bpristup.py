@@ -97,15 +97,16 @@ Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
 try:
     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
     db.commit()
-    lastrow = mycursor.lastrowid
+    lstrow = mycursor.lastrowid
+    lstrow = int(lstrow)
     try:
-        deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
-        deviceID = str(deviceID)
-        print(deviceID)
+        devID = clf.connect(rdwr={'on-connect': lambda tag: False})
+        devID = str(devID)
+        print(devID)
         print("Uspjesno citanje!")
         buzzerBeep()
 
-        mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
+        mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lstrow, devID))
         db.commit()
         pass
     except:
@@ -255,7 +256,7 @@ def UserAdd():
             while i < DeviceNum:
                 print("Citanje novog NFC uredjaja")
 
-                with ExpectTimeout(5, print_traceback=False):
+                with ExpectTimeout(10, print_traceback=False):
                     try:
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
