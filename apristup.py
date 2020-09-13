@@ -526,7 +526,6 @@ def resetLogs():
             secLevel = int(''.join(map(str, secLevel)))
 
             if secLevel == 2 :
-                print("Prelazak na dodavanje")
                 logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
 
                 mycursor.execute("TRUNCATE TABLE Logs")
