@@ -234,7 +234,7 @@ def UserAdd():
             while i < DeviceNum:
                 print("Citanje novog NFC uredjaja")
 
-                with ExpectTimeout(5, print_traceback=False):
+                with ExpectTimeout(10, print_traceback=False):
                     try:
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
