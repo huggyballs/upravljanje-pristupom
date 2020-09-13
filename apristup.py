@@ -458,12 +458,14 @@ def resetFunction():
                 mycursor.execute("TRUNCATE TABLE Users")
                 mycursor.execute("TRUNCATE TABLE Devices")
                 db.commit()
+                print("Izbrisane tablice")
                 logger.debug("Reset tablica")
 
                 try:
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
                     db.commit()
                     lastrow = mycursor.lastrowid
+                    lastrow = int(lastrow)
                     try:
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
