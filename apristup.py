@@ -26,7 +26,7 @@ db = mysql.connector.connect(
     database="kontrolapristupa",
     autocommit=True
     )
-mycursor = db.cursor()
+mycursor = db.cursor(buffered=True)
 
 try:
     #kod za dodavanje tablice s korisnicima
