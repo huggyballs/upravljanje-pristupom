@@ -99,7 +99,6 @@ try:
         devID = str(devID)
         print(devID)
         print("Uspjesno citanje!")
-        buzzerBeep()
 
         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lstrow, devID))
         pass
