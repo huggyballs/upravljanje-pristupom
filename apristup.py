@@ -6,7 +6,6 @@ import nfc
 
 import time
 from datetime import datetime
-import thread
 
 import os
 import sys
@@ -189,24 +188,24 @@ def UserAdd():
                     logger.debug('Potvrdjena sigurnosna razina 1')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
+                    last_id = mycursor.lastrowid
+                    last_id = int(last_id)
                     logger.info('Dodan novi korisnik')
                     now = datetime.now()
                     now = now.strftime('%Y-%m-%d %H:%M:%S')      
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
-                    last_id = mycursor.lastrowid
-                    last_id = int(last_id)
                     break
                 elif NewSecLevel == 2 :
                     print("Sig. razina 2")
                     logger.debug('potvrdjena sigurnosna razina 2')
                     #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
+                    last_id = mycursor.lastrowid
+                    last_id = int(last_id)
                     logger.info('Dodan novi korisnik')
                     now = datetime.now()
                     now = now.strftime('%Y-%m-%d %H:%M:%S')      
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
-                    last_id = mycursor.lastrowid
-                    last_id = int(last_id)
                     break
                 else:
                     #Neispravan unos!
