@@ -454,7 +454,7 @@ def resetFunction():
                         display.lcd_clear()
                         display.lcd_display_string("Neuspjesno", 1)
                         display.lcd_display_string("Citanje!", 2)
-                        buzzerBeep()
+                        buzzerBeepAlarm()
                         time.sleep(1)
                         pass
                 except:
