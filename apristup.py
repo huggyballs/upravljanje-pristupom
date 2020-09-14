@@ -227,8 +227,11 @@ def UserAdd():
             while i < DeviceNum:
                 print("Citanje novog NFC uredjaja")
 
-                with ExpectTimeout(20, print_traceback=False):
+                with ExpectTimeout(15, print_traceback=False):
                     try:
+                        display.lcd_clear()
+                        display.lcd_display_string("Prislonite NFC", 1)
+                        display.lcd_display_string("uredjaj!", 2)
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
                         print(deviceID)
@@ -236,6 +239,10 @@ def UserAdd():
                         buzzerBeep()
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (last_id, deviceID))
+                        display.lcd_clear()
+                        display.lcd_display_string("Uspjesno", 1)
+                        display.lcd_display_string("dodavanje!", 2)
+                        time.sleep(1)
                         logger.info('Korisniku dodijeljen novi uredjaj')
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -347,7 +354,7 @@ def NFCReadAccess():
 
     #slijedi pokusaj citanja NFC-a u trajanju od 5 sekundi
     
-    with ExpectTimeout(20, print_traceback=False):
+    with ExpectTimeout(15, print_traceback=False):
         try:
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
             userID = str(userID)
@@ -513,7 +520,7 @@ def resetLogs():
         display.lcd_display_string("uredjaj!", 2)
         UserID = ''
 
-        with ExpectTimeout(20, print_traceback=False):
+        with ExpectTimeout(15, print_traceback=False):
             try:
                 UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
                 UserID = str(UserID)
@@ -625,7 +632,7 @@ def buzzerBeep():
 
 def buzzerBeepAlarm():
     i = 0
-    while i < 6:
+    while i < 8:
         GPIO.output(buzzer,GPIO.HIGH)
         print("BIIIIP")
         time.sleep(0.3)
@@ -639,7 +646,6 @@ def relayOpen():
     #HIGH odgovara jedinci i otkljucanim vratima a LOW nuli i ponovnom zakljucavanju
     GPIO.output(buzzer,GPIO.HIGH)
     print("Otkljucano")
-    buzzerBeep()
     display.lcd_clear()
     display.lcd_display_string("Vrata su ", 1)
     display.lcd_display_string("otkljucana!", 2)
