@@ -448,6 +448,7 @@ def resetFunction():
                         display.lcd_clear()
                         display.lcd_display_string("Sustav", 1)
                         display.lcd_display_string("Resetiran!", 2)
+                        time.sleep(1)
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
                         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Sustav resetiran, te dodijeljen novi admin'))
