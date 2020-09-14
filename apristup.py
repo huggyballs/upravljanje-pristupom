@@ -621,7 +621,6 @@ def buzzerBeep():
     time.sleep(0.5)
     GPIO.output(buzzer,GPIO.LOW)
     print("KRAJ BIIIIP")
-    time.sleep(0.5)
     pass
 
 def buzzerBeepAlarm():
