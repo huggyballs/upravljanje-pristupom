@@ -175,8 +175,8 @@ def UserAdd():
             while True:
                 #trazi definiranje nove sigurnosne razine
                 display.lcd_clear()
-                display.lcd_display_string("Sigurnosna razina", 1)
-                display.lcd_display_string("1 ili 2?", 2)
+                display.lcd_display_string("Sigurnosna", 1)
+                display.lcd_display_string("razina 1 ili 2?", 2)
                 print("Sigurnosna razina 1 ili 2?")
                 logger.debug('Zatrazen unos sigurnosne razine novog korisnika.')
                 NewSecLevel = input()
@@ -227,7 +227,7 @@ def UserAdd():
             while i < DeviceNum:
                 print("Citanje novog NFC uredjaja")
 
-                with ExpectTimeout(10, print_traceback=False):
+                with ExpectTimeout(20, print_traceback=False):
                     try:
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
@@ -347,7 +347,7 @@ def NFCReadAccess():
 
     #slijedi pokusaj citanja NFC-a u trajanju od 5 sekundi
     
-    with ExpectTimeout(10, print_traceback=False):
+    with ExpectTimeout(20, print_traceback=False):
         try:
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
             userID = str(userID)
@@ -438,9 +438,12 @@ def resetFunction():
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
                         logger.info('Adminu dodijeljen novi uredjaj')
+                        display.lcd_clear()
+                        display.lcd_display_string("Sustav", 1)
+                        display.lcd_display_string("Resetiran!", 2)
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
-                        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodijeljen novi admin'))
+                        mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Sustav resetiran, te dodijeljen novi admin'))
                         pass
                     except:
                         print("Neuspjesno citanje")
@@ -510,52 +513,58 @@ def resetLogs():
         display.lcd_display_string("uredjaj!", 2)
         UserID = ''
 
-        try:
-            UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
-            UserID = str(UserID)
-            print(UserID)
-            print("Uspjesno citanje!")
-            buzzerBeep()
+        with ExpectTimeout(20, print_traceback=False):
+            try:
+                UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
+                UserID = str(UserID)
+                print(UserID)
+                print("Uspjesno citanje!")
+                buzzerBeep()
 
-            mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
-            usid_int = mycursor.fetchone()
-            usid_int = int(''.join(map(str, usid_int)))
-            print(usid_int)
-            mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
-            secLevel = mycursor.fetchone()
-            secLevel = int(''.join(map(str, secLevel)))
+                mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
+                usid_int = mycursor.fetchone()
+                usid_int = int(''.join(map(str, usid_int)))
+                print(usid_int)
+                mycursor.execute("SELECT Seclev FROM Users WHERE id = %s", (usid_int,))
+                secLevel = mycursor.fetchone()
+                secLevel = int(''.join(map(str, secLevel)))
 
-            if secLevel == 2 :
-                logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
+                if secLevel == 2 :
+                    logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
 
-                mycursor.execute("TRUNCATE TABLE Logs")
-                print("Izbrisani logovi")
-                logger.debug("Reset logova")      
-            else:
+                    mycursor.execute("TRUNCATE TABLE Logs")
+                    display.lcd_clear()
+                    display.lcd_display_string("Logovi", 1)
+                    display.lcd_display_string("resetirani!", 2)
+                    buzzerBeep()
+                    time.sleep(1)
+                    print("Izbrisani logovi")
+                    logger.debug("Reset logova")      
+                else:
+                    logger.warning('Neovlasten pokusaj reseta logova!')
+                    now = datetime.now()
+                    now = now.strftime('%Y-%m-%d %H:%M:%S')      
+                    mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
+                    sendEmail(2)
+                    display.lcd_clear()
+                    display.lcd_display_string("Nemate ovlasti", 1)
+                    display.lcd_display_string("Za ovu funkciju", 2)
+                    buzzerBeepAlarm()
+                    time.sleep(2)
+                    pass
+            except:
+                print("Ne valja")
                 logger.warning('Neovlasten pokusaj reseta logova!')
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
                 sendEmail(2)
                 display.lcd_clear()
-                display.lcd_display_string("Nemate ovlasti", 1)
-                display.lcd_display_string("Za ovu funkciju", 2)
+                display.lcd_display_string("Neuspjesno", 1)
+                display.lcd_display_string("Citanje!", 2)
                 buzzerBeepAlarm()
-                time.sleep(2)
+                time.sleep(1)
                 pass
-        except:
-            print("Ne valja")
-            logger.warning('Neovlasten pokusaj reseta logova!')
-            now = datetime.now()
-            now = now.strftime('%Y-%m-%d %H:%M:%S')      
-            mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Neovlasten pokusaj reseta logova!'))
-            sendEmail(2)
-            display.lcd_clear()
-            display.lcd_display_string("Neuspjesno", 1)
-            display.lcd_display_string("Citanje!", 2)
-            buzzerBeepAlarm()
-            time.sleep(1)
-            pass
     else:
         logger.warning('Neovlasten pokusaj reseta logova!')
         now = datetime.now()
