@@ -644,13 +644,13 @@ def buzzerBeepAlarm():
 
 def relayOpen():
     #HIGH odgovara jedinci i otkljucanim vratima a LOW nuli i ponovnom zakljucavanju
-    GPIO.output(buzzer,GPIO.HIGH)
+    GPIO.output(relay,GPIO.HIGH)
     print("Otkljucano")
     display.lcd_clear()
     display.lcd_display_string("Vrata su ", 1)
     display.lcd_display_string("otkljucana!", 2)
     time.sleep(5)
-    GPIO.output(buzzer,GPIO.LOW)
+    GPIO.output(relay,GPIO.LOW)
     print("Zakljucano")
     pass
 
