@@ -25,14 +25,16 @@ db = mysql.connector.connect(
     )
 mycursor = db.cursor(buffered=True)
 
+
+#kod za dodavanje tablica ukoliko slucajno ne postoje
+#ako tablica postoji ide se dalje
+
 try:
-    #kod za dodavanje tablice s korisnicima
     mycursor.execute("CREATE TABLE Users (id int PRIMARY KEY NOT NULL AUTO_INCREMENT, Seclev ENUM('1', '2') NOT NULL, role VARCHAR(10) NOT NULL)")
     pass
 except:
     print("postoji")
     pass
-    #tablica postoji pa se ide dalje
 try:
     mycursor.execute("CREATE TABLE Devices (DeviceNum int PRIMARY KEY NOT NULL AUTO_INCREMENT, UserId int NOT NULL, DeviceId VARCHAR(40) NOT NULL)")
     pass
@@ -45,6 +47,8 @@ try:
 except:
     print("postoji")
     pass
+
+#inicijalizacija logova
     
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -64,8 +68,9 @@ logger.addHandler(handlerwarning)
 logger.addHandler(handlerinfo)
 logger.addHandler(handleraction)
 
-display = lcddriver.lcd()
+#inicijalizacija pojedinacnih komponenti
 
+display = lcddriver.lcd()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 clf = nfc.ContactlessFrontend()
@@ -74,6 +79,8 @@ buzzer = 5
 relay = 6
 GPIO.setup(buzzer,GPIO.OUT)
 GPIO.setup(relay,GPIO.OUT)
+
+#podaci relevantni za e-mail funkciju
 
 port = 587
 smtp_server = "smtp.gmail.com"
@@ -89,11 +96,11 @@ Subject: Upozorenje!
 
 Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
 
+#Timeout funkcija. Kako citac radi na Pythonu 2 treba se definirati posebna timeout funkcija koju ta vertija nema
+
 try:
-    # Should be defined in Python 3
     x = TimeoutError
 except:
-    # For Python 2
     class TimeoutError(Exception):
         def __init__(self, value="Timeout"):
             self.value = value
@@ -109,7 +116,6 @@ class ExpectTimeout(object):
         self.print_traceback = print_traceback
         self.mute = mute
 
-    # Tracing function
     def check_time(self, frame, event, arg):
         if self.original_trace_function is not None:
             self.original_trace_function(frame, event, arg)
@@ -120,7 +126,6 @@ class ExpectTimeout(object):
 
         return self.check_time
 
-    # Begin of `with` block
     def __enter__(self):
         start_time = time.time()
         self.end_time = start_time + self.seconds_before_timeout
@@ -129,7 +134,6 @@ class ExpectTimeout(object):
         sys.settrace(self.check_time)
         return self
 
-    # End of `with` block
     def __exit__(self, exc_type, exc_value, tb):
         self.cancel()
 
@@ -138,7 +142,7 @@ class ExpectTimeout(object):
 
         if not self.mute:
             print("(expected)")
-        return True  # Ignore it
+        return True
 
     def cancel(self):
         sys.settrace(self.original_trace_function)
@@ -152,14 +156,13 @@ def UserAdd():
         display.lcd_display_string("1-DA 3-NE", 2)
         time.sleep(1)
         response = input()
-        #provjera zeli li se dodati korisnika
         NewSecLevel = 0
         deviceID = ''
 
         if response == 1 :
 
             while True:
-                #trazi definiranje nove sigurnosne razine
+                #definiranje nove sigurnosne razine
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna", 1)
                 display.lcd_display_string("razina 1 ili 2?", 2)
@@ -206,6 +209,8 @@ def UserAdd():
 
                 with ExpectTimeout(15, print_traceback=False):
                     try:
+                        #Nakon sto se definira broj uredjaja petlja se vrti potreban broj puta
+                        #Pri svakoj iteraciji dodaje se novi uredjaj
                         display.lcd_clear()
                         display.lcd_display_string("Prislonite NFC", 1)
                         display.lcd_display_string("uredjaj!", 2)
@@ -250,6 +255,7 @@ def UserAdd():
     pass
 
 def NFCAddCheck():
+    #treba se izvrsiti provjera sigurnosne razine za vrsenje ove funkcije
     logger.debug('Pokusaj dodavanja novog korisnika')
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
@@ -258,12 +264,13 @@ def NFCAddCheck():
     UserID = ''
 
     try:
+        #citanje
         UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
         UserID = str(UserID)
         print(UserID)
         buzzerBeep()
-        #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
 
+        #Izvlacenje sigurnosne razine korisnika iz bzae podataka
         mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
         usid_int = mycursor.fetchone()
         usid_int = int(''.join(map(str, usid_int)))
@@ -313,9 +320,10 @@ def NFCReadAccess():
     userID = ''
 
     #slijedi pokusaj citanja NFC-a u trajanju od 5 sekundi
-    
     with ExpectTimeout(15, print_traceback=False):
         try:
+            #citanje
+            #ukoliko se ovaj blok koda ne uspije izvrsiti znaci da kursor nije mogao pronaci korisnika u bazi
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
             userID = str(userID)
             print(userID)
@@ -348,6 +356,7 @@ def NFCReadAccess():
             pass
 
 def resetFunction():
+    #potrebno izvrsiti provjeru ovlasti za pristup ovoj funkciji
     display.lcd_clear()
     display.lcd_display_string("Potvrditi akciju", 1)
     display.lcd_display_string("PIN-om!", 2)
@@ -362,11 +371,13 @@ def resetFunction():
         UserID = ''
 
         try:
+            #citanje
             UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
             UserID = str(UserID)
             print(UserID)
             buzzerBeep()
 
+            #provjera sigurnosne razine
             mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
             usid_int = mycursor.fetchone()
             usid_int = int(''.join(map(str, usid_int)))
@@ -386,10 +397,12 @@ def resetFunction():
                 logger.debug("Reset tablica")
 
                 try:
+                    #potrebno nakon brisanja dodati novog admin korisnika
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, 'original'))
                     lastrow = mycursor.lastrowid
                     lastrow = int(lastrow)
                     try:
+                        #citanje
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
                         print(deviceID)
@@ -458,12 +471,12 @@ def resetFunction():
 pass
 
 def resetLogs():
+    #potrebno provjeriti sigurnosnu razinu korisnika za pristup funkciji
     display.lcd_clear()
     display.lcd_display_string("Potvrditi akciju", 1)
     display.lcd_display_string("PIN-om!", 2)
 
     unos = input("Unesi pin: ")
-
     if unos == 1234:
 
         display.lcd_clear()
@@ -473,6 +486,7 @@ def resetLogs():
 
         with ExpectTimeout(15, print_traceback=False):
             try:
+                #citanje
                 UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
                 UserID = str(UserID)
                 print(UserID)
@@ -535,6 +549,7 @@ def resetLogs():
 pass
 
 def sendEmail(msg):
+    #funkcija slanja elektronickih poruka upozorenja
     server = smtplib.SMTP('smtp.gmail.com', port)
     try:
         server.ehlo()
@@ -550,6 +565,7 @@ def sendEmail(msg):
         server.quit()
 
 def lockStatus():
+    #provjera stanja brave. If petlja vraća True ako napon na pinu postoji, tj. ako su vrata otkljucana
     logger.info('Provjera stanja brave')
     now = datetime.now()
     now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -600,6 +616,7 @@ def main():
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
             logger.debug('Program je na pocetnom ekranu')
+            #pocetni izbornik. Odabirom odgovarajuceg unosa pristupa se ostalim funkcijama
 
             #ovo ispod samo za provjeru pravilnog rada baze. Poslije ukloniti
             mycursor.execute("SELECT * FROM Users")
