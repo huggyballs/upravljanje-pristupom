@@ -136,17 +136,6 @@ class ExpectTimeout(object):
         if exc_type is None:
             return
 
-        # An exception occurred
-        if self.print_traceback:
-            lines = ''.join(
-                traceback.format_exception(
-                    exc_type,
-                    exc_value,
-                    tb)).strip()
-        else:
-            lines = traceback.format_exception_only(
-                exc_type, exc_value)[-1].strip()
-
         if not self.mute:
             print("(expected)")
         return True  # Ignore it
@@ -155,7 +144,6 @@ class ExpectTimeout(object):
         sys.settrace(self.original_trace_function)
 
 def UserAdd():
-    print("Uspjesno citanje")
     response = ''
 
     while True:
@@ -163,28 +151,23 @@ def UserAdd():
         display.lcd_display_string("Dodati korisnika", 1)
         display.lcd_display_string("1-DA 3-NE", 2)
         time.sleep(1)
-        print("Dodati korisnika? 1-da 3-ne")
         response = input()
         #provjera zeli li se dodati korisnika
         NewSecLevel = 0
         deviceID = ''
 
         if response == 1 :
-            print("Odabrana opcija DA")
 
             while True:
                 #trazi definiranje nove sigurnosne razine
                 display.lcd_clear()
                 display.lcd_display_string("Sigurnosna", 1)
                 display.lcd_display_string("razina 1 ili 2?", 2)
-                print("Sigurnosna razina 1 ili 2?")
                 logger.debug('Zatrazen unos sigurnosne razine novog korisnika.')
                 NewSecLevel = input()
 
                 if NewSecLevel == 1 :
-                    print("Sig. razina 1")
                     logger.debug('Potvrdjena sigurnosna razina 1')
-                    #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (1, "korisnik"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
@@ -194,9 +177,7 @@ def UserAdd():
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
                     break
                 elif NewSecLevel == 2 :
-                    print("Sig. razina 2")
                     logger.debug('potvrdjena sigurnosna razina 2')
-                    #Dodati sigurnosnu razinu u bazu
                     mycursor.execute("INSERT INTO Users (Seclev, role) VALUES (%s, %s)", (2, "admin"))
                     last_id = mycursor.lastrowid
                     last_id = int(last_id)
@@ -206,15 +187,12 @@ def UserAdd():
                     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodan novi korisnik'))
                     break
                 else:
-                    #Neispravan unos!
-                    print("Neispravan unos!")
                     display.lcd_clear()
                     display.lcd_display_string("Neispravan", 1)
                     display.lcd_display_string("unos!", 2)
                     time.sleep(1)
                     pass
 
-            #upit za broj uredjaja vezanih uz novododanog korisnika
             display.lcd_clear()
             display.lcd_display_string("Broj NFC", 1)
             display.lcd_display_string("uredjaja?", 2)
@@ -225,7 +203,6 @@ def UserAdd():
             deviceID = ''
 
             while i < DeviceNum:
-                print("Citanje novog NFC uredjaja")
 
                 with ExpectTimeout(15, print_traceback=False):
                     try:
@@ -235,7 +212,6 @@ def UserAdd():
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
                         print(deviceID)
-                        print("Uspjesno citanje!")
                         buzzerBeep()
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (last_id, deviceID))
@@ -249,8 +225,6 @@ def UserAdd():
                         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Dodijeljen novi uredjaj korisniku'))
                         pass
                     except:
-                        #isteklo vrijeme
-                        print("Neuspjesno citanje")
                         logger.warning('Neuspjesno dodavanja novog uredjaja')
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -265,12 +239,8 @@ def UserAdd():
                 i = i + 1
             return False
         elif response == 3 :
-            #Ukoliko se korisnik predomisli vraca se na pocetak
-            print("Negativan odgovor!")
             return False
         else:
-            #Unos nijedne od dvije odgovarajuce opcije
-            print("Neispravan odgovor!")
             display.lcd_clear()
             display.lcd_display_string("Neispravan", 1)
             display.lcd_display_string("odgovor!", 2)
@@ -280,7 +250,6 @@ def UserAdd():
     pass
 
 def NFCAddCheck():
-    print("Provjera sigurnosne razine NFC tagom")
     logger.debug('Pokusaj dodavanja novog korisnika')
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
@@ -288,14 +257,10 @@ def NFCAddCheck():
     secLevel = ''
     UserID = ''
 
-    #program provjerava do pet sekundi nalazi li se u dometu valjani NFC uredjaj
-    #provjera ovlasti za dodavanje
-
     try:
         UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
         UserID = str(UserID)
         print(UserID)
-        print("Uspjesno citanje!")
         buzzerBeep()
         #ovdje zapravo ide provjera sigurnosne razine u bazi podataka
 
@@ -308,7 +273,6 @@ def NFCAddCheck():
         secLevel = int(''.join(map(str, secLevel)))
 
         if secLevel == 2 :
-            print("Prelazak na dodavanje")
             logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -316,8 +280,6 @@ def NFCAddCheck():
             UserAdd()
             pass
         else:
-            #baza je vratila da korisnik ne moze dodavati nove korisnike
-            print("Ne postoje ovlasti")
             logger.warning('Korisnik {} je pokusao dodati nove korisnike a nema ovlasti za to'.format(usid_int))
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -331,7 +293,6 @@ def NFCAddCheck():
             pass
         pass
     except:
-        print("Neuspjesno citanje")
         logger.warning('Neuspjesna provjera sigurnosnih ovlasti')
         now = datetime.now()
         now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -345,7 +306,6 @@ def NFCAddCheck():
         pass
 
 def NFCReadAccess():
-    print("Citanje uredjaja")
     logger.debug('Pokusaj ulaska')
     display.lcd_clear()
     display.lcd_display_string("Prislonite NFC", 1)
@@ -359,11 +319,8 @@ def NFCReadAccess():
             userID = clf.connect(rdwr={'on-connect': lambda tag: False})
             userID = str(userID)
             print(userID)
-            print("Uspjesno citanje!")
             buzzerBeep()
 
-            #ovdje ide provjera postojanja korisnika u bazi
-            #ako korisnik postoji u bazi pozvat ce se funkcija za otvaranje vrata
             mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (userID,))
             usid_int = mycursor.fetchone()
             usid_int = int(''.join(map(str, usid_int)))
@@ -377,7 +334,6 @@ def NFCReadAccess():
 
             pass
         except:
-            print("Nesto ne valja!")
             logger.warning('Neuspjesan pokusaj ulaska')
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -409,7 +365,6 @@ def resetFunction():
             UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
             UserID = str(UserID)
             print(UserID)
-            print("Uspjesno citanje!")
             buzzerBeep()
 
             mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
@@ -421,7 +376,6 @@ def resetFunction():
             secLevel = int(''.join(map(str, secLevel)))
 
             if secLevel == 2 :
-                print("Prelazak na dodavanje")
                 logger.info('Uspjesna provjera sigurnosnih ovlasti korisnika {}'.format(usid_int))
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -429,7 +383,6 @@ def resetFunction():
 
                 mycursor.execute("TRUNCATE TABLE Users")
                 mycursor.execute("TRUNCATE TABLE Devices")
-                print("Izbrisane tablice")
                 logger.debug("Reset tablica")
 
                 try:
@@ -440,7 +393,6 @@ def resetFunction():
                         deviceID = clf.connect(rdwr={'on-connect': lambda tag: False})
                         deviceID = str(deviceID)
                         print(deviceID)
-                        print("Uspjesno citanje!")
                         buzzerBeep()
 
                         mycursor.execute("INSERT INTO Devices (UserId, DeviceId) VALUES (%s,%s)", (lastrow, deviceID))
@@ -454,7 +406,6 @@ def resetFunction():
                         mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Sustav resetiran, te dodijeljen novi admin'))
                         pass
                     except:
-                        print("Neuspjesno citanje")
                         logger.warning('Neuspjesno dodavanje novog uredjaja adminu')
                         now = datetime.now()
                         now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -481,7 +432,6 @@ def resetFunction():
                 time.sleep(2)
                 pass
         except:
-            print("Ne valja")
             logger.warning('Neovlasten pokusaj reseta sustava!')
             now = datetime.now()
             now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -526,7 +476,6 @@ def resetLogs():
                 UserID = clf.connect(rdwr={'on-connect': lambda tag: False})
                 UserID = str(UserID)
                 print(UserID)
-                print("Uspjesno citanje!")
                 buzzerBeep()
 
                 mycursor.execute("SELECT UserId FROM Devices WHERE DeviceId = %s", (UserID,))
@@ -546,7 +495,6 @@ def resetLogs():
                     display.lcd_display_string("resetirani!", 2)
                     buzzerBeep()
                     time.sleep(1)
-                    print("Izbrisani logovi")
                     logger.debug("Reset logova")      
                 else:
                     logger.warning('Neovlasten pokusaj reseta logova!')
@@ -561,7 +509,6 @@ def resetLogs():
                     time.sleep(2)
                     pass
             except:
-                print("Ne valja")
                 logger.warning('Neovlasten pokusaj reseta logova!')
                 now = datetime.now()
                 now = now.strftime('%Y-%m-%d %H:%M:%S')      
@@ -608,14 +555,12 @@ def lockStatus():
     now = now.strftime('%Y-%m-%d %H:%M:%S')      
     mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Informacija', 'Provjera stanja brave'))
     if GPIO.input(relay):
-        print("Relej u HIGH")
         display.lcd_clear()
         display.lcd_display_string("Brava je", 1)
         display.lcd_display_string("otkljucana!", 2)
         time.sleep(3)
         pass
     else:
-        print("Relej u LOW")
         display.lcd_clear()
         display.lcd_display_string("Brava je", 1)
         display.lcd_display_string("zakljucana!", 2)
@@ -623,22 +568,17 @@ def lockStatus():
         pass
 
 def buzzerBeep():
-    #HIGH odgovara jedinci i zvuku a LOW nuli i tisini
     GPIO.output(buzzer,GPIO.HIGH)
-    print("BIIIIP")
     time.sleep(0.5)
     GPIO.output(buzzer,GPIO.LOW)
-    print("KRAJ BIIIIP")
     pass
 
 def buzzerBeepAlarm():
     i = 0
     while i < 8:
         GPIO.output(buzzer,GPIO.HIGH)
-        print("BIIIIP")
         time.sleep(0.3)
         GPIO.output(buzzer,GPIO.LOW)
-        print("KRAJ BIIIIP")
         time.sleep(0.1)
         i = i + 1
     pass
@@ -646,21 +586,17 @@ def buzzerBeepAlarm():
 def relayOpen():
     #HIGH odgovara jedinci i otkljucanim vratima a LOW nuli i ponovnom zakljucavanju
     GPIO.output(relay,GPIO.HIGH)
-    print("Otkljucano")
     display.lcd_clear()
     display.lcd_display_string("Vrata su ", 1)
     display.lcd_display_string("otkljucana!", 2)
     time.sleep(5)
     GPIO.output(relay,GPIO.LOW)
-    print("Zakljucano")
     pass
 
 def main():
     try:
 
         while True:
-            print("Vrti se pocetni ekran")
-            #mycursor.execute("DELETE FROM Logs WHERE")
             display.lcd_clear()
             display.lcd_display_string("Unesite PIN:", 1)
             logger.debug('Program je na pocetnom ekranu')
@@ -678,30 +614,21 @@ def main():
 
             unos = input()
             if unos == 1 :
-                #kod za pristup funkciji za unos korisnika. Moze biti bilo koji
-                print("Pokusaj dodavanja korisnika")
                 NFCAddCheck()
                 pass
             elif unos == 1234 :
-                #unosom pina potvrdjujemo pokusaj pristupa vratima
-                print("Unesen tocan PIN")
                 NFCReadAccess()
                 pass
             elif unos == 3:
-                print("Provjera stanja brave")
                 lockStatus()
                 pass
             elif unos == 7:
-                print("Resetiranje cijele tablice")
                 resetFunction()
                 pass
             elif unos == 9:
-                print("Resetiranje logova")
                 resetLogs()
                 pass
             else:
-                #u slucaju pogresnog unosa logirati pokusaj i slati upozorenje
-                print("Netocan unos")
                 display.lcd_clear()
                 display.lcd_display_string("Netocan unos!", 1)
                 time.sleep(2)
@@ -711,7 +638,6 @@ def main():
                 mycursor.execute("INSERT INTO Logs (dt, logType, logMsg) VALUES (%s, %s, %s)", (now, 'Upozorenje', 'Netocan unos na tipkovnici!'))
     except KeyboardInterrupt:
         GPIO.cleanup()
-        print("Kraj rada programa")
         clf.close()
         pass    
     GPIO.cleanup()
