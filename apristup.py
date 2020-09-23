@@ -85,7 +85,7 @@ GPIO.setup(relay,GPIO.OUT)
 port = 587
 smtp_server = "smtp.gmail.com"
 sender_email = "upravljanjepristupom@gmail.com"
-receiver_email = "mraic00@fesb.hr"
+receiver_email = "netko00@nesto.hr" #Ovu liniju zamijeniti sa adresom na koju zelimo slati upozorenja
 password = "emovis123"
 mg1 = """\
 Subject: Upozorenje!
@@ -96,7 +96,7 @@ Subject: Upozorenje!
 
 Sustav je zabiljezio neovlasten pokusaj brisanja/dodavanja korisnika!"""
 
-#Timeout funkcija. Kako citac radi na Pythonu 2 treba se definirati posebna timeout funkcija koju ta vertija nema
+#Timeout funkcija. Kako citac radi na Pythonu 2 treba se definirati posebna timeout funkcija koju ta verzija nema
 
 try:
     x = TimeoutError
