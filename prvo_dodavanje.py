@@ -1,3 +1,6 @@
+#ovu skriptu izvrsiti prije pokretanja glavnog programa ukoliko ne postoji nijedan dodani korisnik i uredjaj u bazi podataka
+#novi ce korisnik imati administratorske ovlasti i preko njega ce se moci dodavati ostali
+
 import nfc
 import mysql.connector
 
